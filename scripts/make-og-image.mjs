@@ -1,11 +1,11 @@
 /**
- * TODO: Placeholder imagery generator — delete this once your own photographs
- * are in `src/assets/stories/` and you have replaced `public/og.png`.
+ * Renders the two images that are not photographs: the 1200×630 social card
+ * used when a link to the site is shared, and the touch icon.
  *
- * Generates ink-toned abstract stand-ins so the repository builds and looks
- * composed out of the box, without shipping anyone else's photographs.
+ * TODO: a card of your own — a photograph, or your name set in type — will
+ * always beat this abstract one. Replace `public/og.jpg` and delete this file.
  *
- *   npm run placeholders
+ *   npm run og
  */
 import { mkdir } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
@@ -13,7 +13,6 @@ import { fileURLToPath } from 'node:url';
 import sharp from 'sharp';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const storyDir = join(root, 'src', 'assets', 'stories');
 const publicDir = join(root, 'public');
 
 /** Ink-adjacent palettes only: warm greys, cold greys, faded indigo, oxblood-brown. */
@@ -136,27 +135,7 @@ async function render({ width, height, palette, seed, out, quality = 78 }) {
   console.log(`  ✓ ${out.replace(root + '/', '')}`);
 }
 
-const stories = [
-  { slug: '01-low-tide', width: 1800, height: 1200 },
-  { slug: '02-the-long-room', width: 1200, height: 1500 },
-  { slug: '03-north-window', width: 1800, height: 1200 },
-  { slug: '04-proofs', width: 1400, height: 1400 },
-  { slug: '05-ferry-in-fog', width: 1800, height: 1050 },
-  { slug: '06-last-light', width: 1200, height: 1500 },
-];
-
-await mkdir(storyDir, { recursive: true });
 await mkdir(publicDir, { recursive: true });
-
-console.log('Rendering placeholder photographs…');
-for (const [index, story] of stories.entries()) {
-  await render({
-    ...story,
-    palette: palettes[index % palettes.length],
-    seed: (index + 1) * 137,
-    out: join(storyDir, `${story.slug}.jpg`),
-  });
-}
 
 console.log('Rendering social card and touch icon…');
 await render({

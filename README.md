@@ -23,7 +23,7 @@ npm run dev      # http://localhost:4321
 | `npm run build`      | Static build into `dist/`                         |
 | `npm run preview`    | Serve the built site locally                      |
 | `npm run check`      | Type-check the project                            |
-| `npm run placeholders` | Regenerate the placeholder images (see below)   |
+| `npm run og`         | Re-render `public/og.jpg` and the touch icon      |
 
 ---
 
@@ -46,8 +46,9 @@ Every piece of placeholder content is marked. Search the project for `TODO:`:
 grep -rn "TODO:" src public scripts
 ```
 
-That will turn up the config placeholders, the sample writing, the sample
-story-lane entries, and the placeholder image generator.
+That turns up the config placeholders, the sample writing, and the words
+written for the story-lane photographs — the photographs are yours, but the
+captions and two of the four dates are guesses. Replace them.
 
 ---
 
@@ -65,11 +66,12 @@ Two steps.
 
 ```markdown
 ---
-title: Low tide, ten past six
-date: 2026-03-14
-image: ../../assets/stories/low-tide.jpg
-alt: A pale estuary at dawn, three weathered mooring posts standing in shallow water.
-meta: Estuary · Portra 400
+title: Air City
+date: 2016-06-20
+image: ../../assets/stories/air-city-cover.jpg
+alt: A hand-drawn A4 cover page, “Air” in red block letters and “City” in blue beneath it.
+meta: Cover page · ballpoint on A4
+order: 2
 ---
 
 Whatever you want to say beside the picture. Two short paragraphs usually sits
@@ -79,30 +81,20 @@ best against the image; the layout will take more if you have more.
 | Field   | Required | Notes                                                               |
 | ------- | -------- | ------------------------------------------------------------------- |
 | `title` | yes      | Shown beside the photograph.                                        |
-| `date`  | yes      | `YYYY-MM-DD`. Controls the order of the lane.                        |
+| `date`  | yes      | `YYYY-MM-DD`. Shown above the title, and orders the lane.             |
 | `image` | yes      | Path **relative to the Markdown file**. Build fails if it is wrong.  |
 | `alt`   | yes      | Describe the picture for someone who cannot see it.                  |
-| `meta`  | no       | Small line under the text: place, film stock, camera.                |
-| `order` | no       | Force a position. Lower numbers first; otherwise date decides.       |
+| `meta`  | no       | Small line under the text: place, medium, camera.                    |
+| `order` | no       | Force a position. Lower numbers first; otherwise newest date first.  |
 | `draft` | no       | `true` keeps it in `dev` but out of the built site.                  |
 
 The lane alternates which side the text sits on automatically, so you never
 have to think about it. On screens narrower than about 900 px the text stacks
 under the photograph.
 
-### Bringing your own photographs across
-
-Pull the branch, then:
-
-```bash
-cp ~/Pictures/selects/*.jpg src/assets/stories/
-rm src/assets/stories/0*-*.jpg      # the six placeholders
-npm run dev
-```
-
-Then replace the six files in `src/content/story/` with your own, pointing
-`image:` at your filenames. Delete `scripts/make-placeholders.mjs` and the
-`placeholders` script in `package.json` once you no longer need them.
+The four entries currently in the lane run oldest to newest, which is what the
+`order:` field is doing — without it the newest photograph would open the
+sequence. Drop `order:` from all four if you would rather read it backwards.
 
 Portrait, landscape and square all work; the lane is built around a column, not
 a fixed aspect ratio, so mixing orientations is what gives it rhythm.
@@ -169,11 +161,27 @@ src/
   assets/stories/       ← the photographs themselves
   components/           ← masthead, colophon, and the ink pieces
   layouts/Base.astro    ← the page shell and the reveal observer
+  lib/url.ts            ← wrap internal links in url() — see below
   pages/                ← one file per route
   styles/
     global.css          ← the design system: colour, type, spacing, layout
     motion.css          ← every animation, and the reduced-motion opt-out
 ```
+
+### One rule if you add a link
+
+Astro does not rewrite hrefs you write by hand, so an internal link written as
+`href="/writing/"` would 404 on a site served from a subpath. Pass internal
+paths through the helper instead:
+
+```astro
+---
+import { url } from '../lib/url';
+---
+<a href={url('/writing/')}>Writing</a>
+```
+
+External links, `mailto:` and `#fragments` need nothing.
 
 ### The design system
 
@@ -207,15 +215,47 @@ rather than blank.
 ## Deploying
 
 The site is fully static: `npm run build` writes `dist/`, and any static host
-will serve it. Set your real domain in `site.config.ts` first — the sitemap,
-RSS feed and OpenGraph tags are all built from it.
+will serve it.
 
-If this repository has no remote yet, give it one before connecting a host:
+**Set `url` in `src/site.config.ts` first.** It is the single source of truth
+for the deployed address: canonical links, the sitemap, the RSS feed, the
+OpenGraph tags, and Astro's `base` are all derived from it. If the URL has a
+path in it, every internal link picks that path up automatically.
 
-```bash
-git remote add origin git@github.com:you/your-site.git
-git push -u origin HEAD
-```
+### GitHub Pages
+
+A workflow is already committed at `.github/workflows/deploy.yml`. It runs on
+every push to `main`, type-checks, builds, and publishes `dist/`.
+
+1. **Push the repository to GitHub.**
+
+   ```bash
+   git remote add origin git@github.com:YOU/ink-and-paper.git
+   git push -u origin main
+   ```
+
+2. **Turn Pages on.** Repository → Settings → Pages → *Build and deployment* →
+   **Source: GitHub Actions**. Not "Deploy from a branch" — the workflow
+   publishes an artifact directly.
+
+3. **Set the URL** in `src/site.config.ts` to match where Pages will serve it:
+
+   | Repository name      | Site lives at                       | `url`                                     |
+   | -------------------- | ----------------------------------- | ----------------------------------------- |
+   | `ink-and-paper`      | a subpath of your Pages domain      | `https://YOU.github.io/ink-and-paper`     |
+   | `YOU.github.io`      | the root of your Pages domain       | `https://YOU.github.io`                   |
+   | anything, + a domain | your own domain                     | `https://yourdomain.com`                  |
+
+   Commit and push. The subpath case is the one that usually breaks a static
+   site — here it is handled, but only if `url` actually contains the subpath.
+
+4. **Watch the Actions tab.** The first run takes a couple of minutes; after
+   that the deployed URL appears under Settings → Pages.
+
+For a custom domain, add it under Settings → Pages, create a `public/CNAME`
+file containing the bare domain, and set `url` to `https://yourdomain.com`.
+
+### Other hosts
 
 **Netlify** — connect the repository, or:
 
@@ -240,11 +280,9 @@ Astro (build command `npm run build`, output directory `dist`). Or:
 npm run build && npx wrangler pages deploy dist
 ```
 
-**GitHub Pages** — works too, via `withastro/action`. If you deploy to a
-project subpath rather than a domain root, set `base` in `astro.config.mjs`.
-
-After the first deploy, check that `https://your-domain/sitemap-index.xml` and
-`https://your-domain/rss.xml` both resolve.
+After the first deploy, check that `<your-url>/sitemap-index.xml` and
+`<your-url>/rss.xml` both resolve, and that the navigation works — those three
+are what break when the deployed URL and `site.config.ts` disagree.
 
 ---
 
