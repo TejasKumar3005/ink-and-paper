@@ -1,0 +1,27 @@
+---
+/**
+ * An ink-wash divider: a stroke that pools in the middle and dries out at
+ * both ends. Purely decorative, so it is hidden from assistive technology.
+ */
+interface Props {
+  class?: string;
+}
+const { class: className } = Astro.props;
+---
+
+<svg
+  class:list={['wash', className]}
+  viewBox="0 0 1200 40"
+  preserveAspectRatio="none"
+  aria-hidden="true"
+  focusable="false"
+  role="presentation"
+>
+  <path
+    d="M8 21.5c112-6.4 224-8.2 336-6.1 121 2.3 241.6 9.4 362.7 9.9 165 .6 330.1-5.6 493.3-13.2"
+    fill="none"
+    stroke="url(#wash-fade)"
+    stroke-width="2.6"
+    stroke-linecap="round"
+    filter="url(#ink-bleed)"></path>
+</svg>

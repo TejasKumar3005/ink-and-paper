@@ -1,0 +1,125 @@
+---
+/**
+ * The SVG filter sprite. Rendered once per page, referenced by CSS
+ * (`filter: url(#…)`) from the page-transition bloom, the heading brush
+ * stroke, the section dividers and the intro blot.
+ *
+ * Kept as real markup rather than data URIs so the turbulence seeds can be
+ * re-rolled from JavaScript, which is what keeps every page transition from
+ * having an identical edge.
+ */
+---
+
+<svg class="ink-defs" aria-hidden="true" focusable="false" width="0" height="0">
+  <defs>
+    <!-- Page-transition bloom: a large, slow-frequency wash. -->
+    <filter
+      id="ink-wash"
+      x="-25%"
+      y="-25%"
+      width="150%"
+      height="150%"
+      color-interpolation-filters="sRGB"
+    >
+      <feTurbulence
+        id="ink-wash-turbulence"
+        type="fractalNoise"
+        baseFrequency="0.0065 0.009"
+        numOctaves="3"
+        seed="7"
+        result="wash-noise"></feTurbulence>
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="wash-noise"
+        scale="115"
+        xChannelSelector="R"
+        yChannelSelector="G"></feDisplacementMap>
+    </filter>
+
+    <!-- Brush strokes: a fine wobble, as if the nib caught the paper. -->
+    <filter
+      id="ink-rough"
+      x="-12%"
+      y="-60%"
+      width="124%"
+      height="220%"
+      color-interpolation-filters="sRGB"
+    >
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.045 0.09"
+        numOctaves="2"
+        seed="3"
+        result="rough-noise"></feTurbulence>
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="rough-noise"
+        scale="2.6"
+        xChannelSelector="R"
+        yChannelSelector="G"></feDisplacementMap>
+    </filter>
+
+    <!-- The blot behind the accent word, and the section dividers. -->
+    <filter
+      id="ink-blot"
+      x="-40%"
+      y="-40%"
+      width="180%"
+      height="180%"
+      color-interpolation-filters="sRGB"
+    >
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.016 0.022"
+        numOctaves="3"
+        seed="11"
+        result="blot-noise"></feTurbulence>
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="blot-noise"
+        scale="28"
+        xChannelSelector="R"
+        yChannelSelector="G"></feDisplacementMap>
+    </filter>
+
+    <filter
+      id="ink-bleed"
+      x="-20%"
+      y="-200%"
+      width="140%"
+      height="500%"
+      color-interpolation-filters="sRGB"
+    >
+      <feTurbulence
+        type="fractalNoise"
+        baseFrequency="0.012 0.28"
+        numOctaves="2"
+        seed="19"
+        result="bleed-noise"></feTurbulence>
+      <feDisplacementMap
+        in="SourceGraphic"
+        in2="bleed-noise"
+        scale="9"
+        xChannelSelector="R"
+        yChannelSelector="G"></feDisplacementMap>
+    </filter>
+    <!-- Dividers: ink that pools in the middle and dries out at the ends. -->
+    <linearGradient id="wash-fade" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="currentColor" stop-opacity="0"></stop>
+      <stop offset="0.18" stop-color="currentColor" stop-opacity="0.5"></stop>
+      <stop offset="0.5" stop-color="currentColor" stop-opacity="0.9"></stop>
+      <stop offset="0.82" stop-color="currentColor" stop-opacity="0.45"></stop>
+      <stop offset="1" stop-color="currentColor" stop-opacity="0"></stop>
+    </linearGradient>
+  </defs>
+</svg>
+
+<style>
+  .ink-defs {
+    position: absolute;
+    width: 0;
+    height: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+</style>

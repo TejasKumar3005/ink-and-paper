@@ -1,0 +1,38 @@
+---
+/**
+ * A heading with a brush stroke that draws itself in underneath.
+ * The path is deliberately uneven — drawn as if by hand, not by a compass —
+ * and `pathLength="1"` keeps the dash animation correct at any width.
+ */
+interface Props {
+  /** Heading level. Pick the one the document outline needs. */
+  as?: 'h1' | 'h2' | 'h3';
+  /** Delay the stroke to stagger it behind neighbouring reveals. */
+  delay?: number;
+  class?: string;
+  id?: string;
+}
+
+const { as: Tag = 'h2', delay = 0, class: className, id } = Astro.props;
+
+/** Three strokes; picking one by heading text would be fussier than it is worth. */
+const strokes = [
+  'M3 11.4c34-5.2 69.8 3.1 104.6 1.4 39.9-2 79.1-7.4 119-6.2 41 1.2 81.5 7.6 122.4 5.4 16.9-.9 33.6-3.4 48.6-7.6',
+  'M4 9.2c29.7 4.8 60.3 2.1 90.3.2 47.3-3 94.7-4.8 142-1.6 36.4 2.5 72.6 8.4 109.1 7.6 15.1-.3 30.2-1.9 51.3-6.4',
+  'M2.5 12.6C40 6.1 78.6 10.3 116.6 9.1 160 7.7 203 1.6 246.4 2.7c38.6 1 76.8 7.7 115.4 9.8 12 .7 24.1.4 35.6-2.1',
+];
+const stroke = strokes[Math.floor(Math.random() * strokes.length)];
+---
+
+<Tag class:list={['ink-heading', className]} id={id} data-ink style={`--reveal-delay:${delay}ms`}>
+  <span class="ink-heading__text"><slot /></span>
+  <svg
+    class="ink-heading__stroke"
+    viewBox="0 0 400 18"
+    preserveAspectRatio="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d={stroke} pathLength="1"></path>
+  </svg>
+</Tag>

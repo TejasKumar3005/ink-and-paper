@@ -1,0 +1,112 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Masthead from '../components/Masthead.astro';
+import Colophon from '../components/Colophon.astro';
+import InkDefs from '../components/InkDefs.astro';
+import InkBloom from '../components/InkBloom.astro';
+import { site } from '../site.config';
+
+interface Props {
+  title: string;
+  description?: string;
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  /** Wide pages (the story lane) opt out of the narrow measure. */
+  wide?: boolean;
+}
+
+const { title, description, type, publishedTime } = Astro.props;
+---
+
+<!doctype html>
+<html lang={site.locale}>
+  <head>
+    <BaseHead
+      title={title}
+      description={description}
+      type={type}
+      publishedTime={publishedTime}
+    />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <InkDefs />
+    <InkBloom />
+    <Masthead />
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+    <Colophon />
+
+    <script>
+      /**
+       * One observer for every entrance: text reveals, heading brush strokes
+       * and photographs developing. Nothing here runs when the reader has
+       * asked for reduced motion.
+       */
+      const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      const TARGETS: Array<[selector: string, className: string, margin: string]> = [
+        ['[data-reveal]', 'is-revealed', '0px 0px -12% 0px'],
+        ['[data-ink]', 'is-inked', '0px 0px -8% 0px'],
+        ['[data-develop]', 'is-developed', '0px 0px -14% 0px'],
+      ];
+
+      let observers: IntersectionObserver[] = [];
+
+      function settle() {
+        for (const [selector, className] of TARGETS) {
+          document
+            .querySelectorAll(selector)
+            .forEach((node) => node.classList.add(className));
+        }
+      }
+
+      /** Anything already on screen is revealed outright, not left to the
+       *  observer's first callback — that way the opening screen can never
+       *  be caught mid-hide. */
+      const onScreen = (node: Element) => {
+        const box = node.getBoundingClientRect();
+        return box.top < window.innerHeight * 0.94 && box.bottom > 0;
+      };
+
+      function observe() {
+        observers.forEach((observer) => observer.disconnect());
+        observers = [];
+
+        if (REDUCED.matches || !('IntersectionObserver' in window)) {
+          settle();
+          return;
+        }
+
+        for (const [selector, className, rootMargin] of TARGETS) {
+          const nodes = Array.from(document.querySelectorAll(selector)).filter(
+            (node) => !node.classList.contains(className),
+          );
+          if (!nodes.length) continue;
+
+          const observer = new IntersectionObserver(
+            (entries) => {
+              for (const entry of entries) {
+                if (!entry.isIntersecting) continue;
+                entry.target.classList.add(className);
+                observer.unobserve(entry.target);
+              }
+            },
+            { rootMargin, threshold: 0.06 },
+          );
+
+          for (const node of nodes) {
+            if (onScreen(node)) node.classList.add(className);
+            else observer.observe(node);
+          }
+          observers.push(observer);
+        }
+      }
+
+      // Fires on first load and after every view transition.
+      document.addEventListener('astro:page-load', observe);
+      REDUCED.addEventListener('change', observe);
+    </script>
+  </body>
+</html>

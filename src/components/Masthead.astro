@@ -1,0 +1,30 @@
+---
+import { site } from '../site.config';
+
+const path = Astro.url.pathname;
+const isCurrent = (href: string) =>
+  href === '/' ? path === '/' : path === href || path.startsWith(href);
+---
+
+<header class="masthead">
+  <div class="shell masthead__inner">
+    <p>
+      <a class="masthead__name" href="/" rel="home">{site.name}</a>
+      <span class="meta meta--plain masthead__tagline">{site.tagline}</span>
+    </p>
+
+    <nav class="nav" aria-label="Primary">
+      <ul>
+        {
+          site.nav.map((item) => (
+            <li>
+              <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>

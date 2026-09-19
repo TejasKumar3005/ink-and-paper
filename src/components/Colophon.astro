@@ -1,0 +1,44 @@
+---
+import { site } from '../site.config';
+import InkDivider from './InkDivider.astro';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="colophon">
+  <div class="shell">
+    <InkDivider class="colophon__wash" />
+    <div class="colophon__inner">
+      <p class="meta meta--plain">
+        © {year} {site.name}. Set in a serif, printed with light.
+      </p>
+      <ul class="colophon__links meta">
+        {
+          site.links.map((link) => (
+            <li>
+              <a href={link.href} rel="me noopener">
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+        <li><a href="/rss.xml">RSS</a></li>
+      </ul>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .colophon__wash {
+    margin-block: 0 var(--space-l);
+  }
+
+  .colophon__links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2xs) var(--space-m);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+</style>

@@ -1,0 +1,73 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import { site } from '../site.config';
+import '../styles/global.css';
+import '../styles/motion.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  /** Set on article pages so OpenGraph reports the right type. */
+  type?: 'website' | 'article';
+  publishedTime?: Date;
+  image?: string;
+}
+
+const {
+  title,
+  description = site.description,
+  type = 'website',
+  publishedTime,
+  image = site.ogImage,
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'http://localhost:4321');
+const ogImage = new URL(image, Astro.site ?? 'http://localhost:4321');
+const fullTitle = title === site.name ? title : `${title} — ${site.name}`;
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>{fullTitle}</title>
+<meta name="description" content={description} />
+<link rel="canonical" href={canonical} />
+
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+<link rel="sitemap" href="/sitemap-index.xml" />
+<link
+  rel="alternate"
+  type="application/rss+xml"
+  title={`${site.name} — writing`}
+  href={new URL('rss.xml', Astro.site ?? 'http://localhost:4321')}
+/>
+
+<meta name="theme-color" content="#faf8f4" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#100f0e" media="(prefers-color-scheme: dark)" />
+
+<meta property="og:type" content={type} />
+<meta property="og:title" content={fullTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonical} />
+<meta property="og:site_name" content={site.name} />
+<meta property="og:image" content={ogImage} />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:locale" content={site.locale} />
+{
+  publishedTime && (
+    <meta property="article:published_time" content={publishedTime.toISOString()} />
+  )
+}
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content={fullTitle} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={ogImage} />
+
+<ClientRouter />
+
+<!-- Reveal animations only hide content when they can also un-hide it. -->
+<script is:inline>
+  document.documentElement.classList.add('js');
+</script>
