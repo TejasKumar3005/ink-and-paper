@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
 import { site } from '../site.config';
+import { url } from '../lib/url';
 import '../styles/global.css';
 import '../styles/motion.css';
 
@@ -21,8 +22,10 @@ const {
   image = site.ogImage,
 } = Astro.props;
 
-const canonical = new URL(Astro.url.pathname, Astro.site ?? 'http://localhost:4321');
-const ogImage = new URL(image, Astro.site ?? 'http://localhost:4321');
+const origin = Astro.site ?? 'http://localhost:4321';
+const canonical = new URL(Astro.url.pathname, origin);
+const ogImage = new URL(url(image), origin);
+const feed = url('/rss.xml');
 const fullTitle = title === site.name ? title : `${title} — ${site.name}`;
 ---
 
@@ -32,14 +35,14 @@ const fullTitle = title === site.name ? title : `${title} — ${site.name}`;
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
 
-<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-<link rel="sitemap" href="/sitemap-index.xml" />
+<link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
+<link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
+<link rel="sitemap" href={url('/sitemap-index.xml')} />
 <link
   rel="alternate"
   type="application/rss+xml"
   title={`${site.name} — writing`}
-  href={new URL('rss.xml', Astro.site ?? 'http://localhost:4321')}
+  href={new URL(feed, origin)}
 />
 
 <meta name="theme-color" content="#faf8f4" media="(prefers-color-scheme: light)" />

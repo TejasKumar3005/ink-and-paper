@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import InkHeading from '../components/InkHeading.astro';
+import { url } from '../lib/url';
 ---
 
 <Base title="Not found" description="That page is not here.">
@@ -11,7 +12,7 @@ import InkHeading from '../components/InkHeading.astro';
       withdrawn. All three happen.
     </p>
     <p>
-      <a class="ink-link" href="/">Back to the beginning</a>
+      <a class="ink-link" href={url('/')}>Back to the beginning</a>
     </p>
   </div>
 </Base>

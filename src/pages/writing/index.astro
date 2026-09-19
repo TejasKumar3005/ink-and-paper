@@ -3,6 +3,7 @@ import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import InkHeading from '../../components/InkHeading.astro';
 import { site } from '../../site.config';
+import { url } from '../../lib/url';
 import { formatDate, getWriting, isoDate, readingTime } from '../../lib/content';
 
 const entries = await getWriting();
@@ -50,7 +51,7 @@ const stream = await Promise.all(
             {entry.data.kind === 'article' ? (
               <>
                 <h2 class="entry__title">
-                  <a class="ink-link" href={`/writing/${entry.id}/`}>
+                  <a class="ink-link" href={url(`/writing/${entry.id}/`)}>
                     {entry.data.title}
                   </a>
                 </h2>
@@ -67,7 +68,7 @@ const stream = await Promise.all(
     </ol>
 
     <p class="writing__feed meta meta--plain">
-      <a class="ink-link" href="/rss.xml">Subscribe by RSS</a>
+      <a class="ink-link" href={url('/rss.xml')}>Subscribe by RSS</a>
     </p>
   </div>
 </Base>

@@ -1,5 +1,6 @@
 ---
 import { site } from '../site.config';
+import { url } from '../lib/url';
 import InkDivider from './InkDivider.astro';
 
 const year = new Date().getFullYear();
@@ -22,7 +23,7 @@ const year = new Date().getFullYear();
             </li>
           ))
         }
-        <li><a href="/rss.xml">RSS</a></li>
+        <li><a href={url('/rss.xml')}>RSS</a></li>
       </ul>
     </div>
   </div>

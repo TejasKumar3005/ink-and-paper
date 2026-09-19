@@ -10,6 +10,7 @@ import {
   readingTime,
   type WritingEntry,
 } from '../../lib/content';
+import { url } from '../../lib/url';
 
 interface Props {
   entry: WritingEntry;
@@ -43,7 +44,7 @@ const minutes = readingTime(entry.body);
   <article class="shell shell--narrow page-top page-bottom">
     <header class="article__header">
       <p class="meta">
-        <a href="/writing/">Writing</a>
+        <a href={url('/writing/')}>Writing</a>
       </p>
       <h1 class="article__title">{entry.data.title}</h1>
       <ul class="article__meta meta" role="list">
@@ -63,7 +64,7 @@ const minutes = readingTime(entry.body);
     <nav class="article__footer meta meta--plain" aria-label="More writing">
       {
         previous ? (
-          <a class="ink-link" rel="prev" href={`/writing/${previous.id}/`}>
+          <a class="ink-link" rel="prev" href={url(`/writing/${previous.id}/`)}>
             ← {previous.data.title}
           </a>
         ) : (
@@ -72,7 +73,7 @@ const minutes = readingTime(entry.body);
       }
       {
         next && (
-          <a class="ink-link" rel="next" href={`/writing/${next.id}/`}>
+          <a class="ink-link" rel="next" href={url(`/writing/${next.id}/`)}>
             {next.data.title} →
           </a>
         )

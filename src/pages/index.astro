@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import InkHeading from '../components/InkHeading.astro';
 import InkDivider from '../components/InkDivider.astro';
 import { site } from '../site.config';
+import { url } from '../lib/url';
 import { formatDate, getArticles, getStory, isoDate } from '../lib/content';
 
 const [articles, story] = await Promise.all([getArticles(), getStory()]);
@@ -40,7 +41,7 @@ const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
       <div class="onward">
         {
           firstPhoto && (
-            <a class="onward__item" href="/story/" data-reveal>
+            <a class="onward__item" href={url('/story/')} data-reveal>
               <span class="meta">Story lane · {story.length} photographs</span>
               <h3 class="onward__title">{firstPhoto.data.title}</h3>
               <p class="onward__blurb">
@@ -56,7 +57,7 @@ const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
           latest && (
             <a
               class="onward__item"
-              href={`/writing/${latest.id}/`}
+              href={url(`/writing/${latest.id}/`)}
               data-reveal
               style="--reveal-delay:140ms"
             >
@@ -75,7 +76,7 @@ const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
       </div>
 
       <p class="onward__all" data-reveal style="--reveal-delay:240ms">
-        <a class="ink-link" href="/writing/">Everything else I have written</a>
+        <a class="ink-link" href={url('/writing/')}>Everything else I have written</a>
       </p>
     </section>
   </div>
