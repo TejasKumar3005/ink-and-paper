@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Ink mark">
+  <style>
+    .paper { fill: #faf8f4; }
+    .ink { fill: #1a1a18; }
+    .accent { stroke: #454a7d; }
+    @media (prefers-color-scheme: dark) {
+      .paper { fill: #100f0e; }
+      .ink { fill: #e9e4da; }
+      .accent { stroke: #a7abe0; }
+    }
+  </style>
+  <rect class="paper" width="64" height="64" rx="8" />
+  <circle class="ink" cx="32" cy="29" r="15" />
+  <path class="accent" d="M11 50c14-4 28-4 42 0" fill="none" stroke-width="4" stroke-linecap="round" />
+</svg>
