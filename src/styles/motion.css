@@ -1,0 +1,287 @@
+/* ==========================================================================
+   Motion: ink behaving like ink.
+   Slow, organic, liquid-settling. Everything here is opt-out under
+   `prefers-reduced-motion: reduce` — see the bottom of the file.
+
+   Only opacity, transform and filter are animated.
+   ========================================================================== */
+
+/* The bloom radius is a registered property so it can be interpolated. */
+@property --bloom-r {
+  syntax: '<length>';
+  inherits: true;
+  initial-value: 0px;
+}
+
+@layer motion {
+  /* ------------------------------------------------------------------------
+     Scroll reveals — fade up with a blur that resolves.
+     Initial states are gated on `.js`, so the page is fully readable when
+     JavaScript never arrives.
+     ---------------------------------------------------------------------- */
+  .js [data-reveal] {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+    filter: blur(6px);
+  }
+
+  .js [data-reveal].is-revealed {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+    transition: opacity var(--dur-reveal) var(--ease-ink) var(--reveal-delay, 0ms),
+      transform var(--dur-reveal) var(--ease-ink) var(--reveal-delay, 0ms),
+      filter var(--dur-reveal) var(--ease-ink) var(--reveal-delay, 0ms);
+  }
+
+  /* ------------------------------------------------------------------------
+     Photographs develop: desaturated and soft, resolving to full clarity.
+     ---------------------------------------------------------------------- */
+  .js [data-develop] img {
+    opacity: 0.86;
+    transform: scale(1.014);
+    filter: saturate(0.3) contrast(0.94) blur(7px);
+  }
+
+  .js [data-develop].is-developed img {
+    opacity: 1;
+    transform: none;
+    filter: saturate(1) contrast(1) blur(0);
+    transition: opacity var(--dur-develop) var(--ease-wash),
+      transform var(--dur-develop) var(--ease-wash),
+      filter var(--dur-develop) var(--ease-wash);
+  }
+
+  /* ------------------------------------------------------------------------
+     Headings: a brush stroke that draws itself in.
+     The path is hand-drawn-irregular; the filter roughens it further.
+     ---------------------------------------------------------------------- */
+  .ink-heading {
+    position: relative;
+    width: fit-content;
+    max-width: 100%;
+  }
+
+  .ink-heading__stroke {
+    display: block;
+    width: calc(100% + 0.5em);
+    margin-inline-start: -0.25em;
+    height: 0.58em;
+    margin-block-start: 0.1em;
+    overflow: visible;
+    color: var(--accent);
+  }
+
+  .ink-heading__stroke path {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.85;
+    filter: url(#ink-rough);
+  }
+
+  .js .ink-heading__stroke path {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 1;
+  }
+
+  .js .ink-heading.is-inked .ink-heading__stroke path {
+    stroke-dashoffset: 0;
+    transition: stroke-dashoffset var(--dur-stroke) var(--ease-wash)
+      var(--reveal-delay, 0ms);
+  }
+
+  /* ------------------------------------------------------------------------
+     A faint ink blot blooming behind the accent word of the intro.
+     ---------------------------------------------------------------------- */
+  .lede {
+    position: relative;
+    z-index: 0;
+  }
+
+  .lede .accent::before {
+    content: '';
+    position: absolute;
+    inset: -0.3em -0.62em -0.2em;
+    z-index: -1;
+    background: var(--accent);
+    opacity: 0.14;
+    border-radius: 58% 42% 63% 37% / 47% 58% 42% 53%;
+    filter: url(#ink-blot) blur(7px);
+  }
+
+  .js .lede .accent::before {
+    opacity: 0;
+    transform: scale(0.55);
+    animation: blot-bloom 2600ms var(--ease-wash) 500ms forwards;
+  }
+
+  @keyframes blot-bloom {
+    from {
+      opacity: 0;
+      transform: scale(0.55);
+    }
+    to {
+      opacity: 0.14;
+      transform: scale(1);
+    }
+  }
+
+  /* ------------------------------------------------------------------------
+     Page transitions: an ink bloom washes across the viewport, then recedes.
+     The mask edge is displaced by feTurbulence so it is never a clean circle.
+     ---------------------------------------------------------------------- */
+  .ink-bloom {
+    position: fixed;
+    inset: 0;
+    z-index: 90;
+    pointer-events: none;
+    visibility: hidden;
+    contain: strict;
+    --bloom-x: 50%;
+    --bloom-y: 50%;
+    --bloom-r: 0px;
+  }
+
+  .ink-bloom[data-state='in'],
+  .ink-bloom[data-state='out'] {
+    visibility: visible;
+  }
+
+  /* No clipping here: the wash has to overhang the viewport so the
+     displacement filter has real ink to pull inwards at the edges. The
+     containment on .ink-bloom crops the filtered result back to the screen. */
+  .ink-bloom__filtered {
+    position: absolute;
+    inset: 0;
+  }
+
+  /* The filter is only mounted while the bloom runs: it costs nothing idle. */
+  .ink-bloom[data-state='in'] .ink-bloom__filtered,
+  .ink-bloom[data-state='out'] .ink-bloom__filtered {
+    filter: url(#ink-wash);
+  }
+
+  .ink-bloom__wash {
+    position: absolute;
+    inset: -14%;
+    background: var(--ink);
+    -webkit-mask-image: radial-gradient(
+      circle var(--bloom-r) at var(--bloom-x) var(--bloom-y),
+      #000 0 68%,
+      rgba(0, 0, 0, 0.72) 86%,
+      rgba(0, 0, 0, 0.2) 96%,
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      circle var(--bloom-r) at var(--bloom-x) var(--bloom-y),
+      #000 0 68%,
+      rgba(0, 0, 0, 0.72) 86%,
+      rgba(0, 0, 0, 0.2) 96%,
+      transparent 100%
+    );
+  }
+
+  /* Receding: the same soft edge, inverted, opening outward like drying ink. */
+  .ink-bloom[data-state='out'] .ink-bloom__wash {
+    -webkit-mask-image: radial-gradient(
+      circle var(--bloom-r) at var(--bloom-x) var(--bloom-y),
+      transparent 0 68%,
+      rgba(0, 0, 0, 0.28) 86%,
+      rgba(0, 0, 0, 0.8) 96%,
+      #000 100%
+    );
+    mask-image: radial-gradient(
+      circle var(--bloom-r) at var(--bloom-x) var(--bloom-y),
+      transparent 0 68%,
+      rgba(0, 0, 0, 0.28) 86%,
+      rgba(0, 0, 0, 0.8) 96%,
+      #000 100%
+    );
+  }
+
+  .ink-bloom[data-state='in'] {
+    animation: bloom-in 760ms cubic-bezier(0.42, 0.04, 0.32, 1) forwards;
+  }
+
+  .ink-bloom[data-state='out'] {
+    animation: bloom-out 900ms cubic-bezier(0.35, 0.08, 0.45, 1) forwards;
+  }
+
+  /* Radii are sized so the wash always reaches the far corner, whichever
+     link was clicked, and clears again only near the end of the recede. */
+  @keyframes bloom-in {
+    from {
+      --bloom-r: 0px;
+    }
+    to {
+      --bloom-r: 155vmax;
+    }
+  }
+
+  /* The last third lifts rather than retreats — ink drying, not a wipe. */
+  @keyframes bloom-out {
+    from {
+      --bloom-r: 0px;
+      opacity: 1;
+    }
+    64% {
+      opacity: 1;
+    }
+    to {
+      --bloom-r: 108vmax;
+      opacity: 0;
+    }
+  }
+
+  /* Our bloom is the transition; the router's default crossfade would fight it. */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Reduced motion: instant, static states. Non-negotiable.
+   -------------------------------------------------------------------------- */
+@layer motion {
+  @media (prefers-reduced-motion: reduce) {
+    .js [data-reveal],
+    .js [data-reveal].is-revealed,
+    .js [data-develop] img,
+    .js [data-develop].is-developed img {
+      opacity: 1 !important;
+      transform: none !important;
+      filter: none !important;
+      transition: none !important;
+    }
+
+    .js .ink-heading__stroke path,
+    .js .ink-heading.is-inked .ink-heading__stroke path {
+      stroke-dasharray: none !important;
+      stroke-dashoffset: 0 !important;
+      transition: none !important;
+    }
+
+    .js .lede .accent::before {
+      opacity: 0.14;
+      transform: none;
+      animation: none !important;
+    }
+
+    .ink-bloom {
+      display: none !important;
+    }
+
+    .ink-link,
+    .ink-link::before,
+    .onward__title,
+    .link-list a,
+    .skip-link {
+      transition: none !important;
+    }
+  }
+}
