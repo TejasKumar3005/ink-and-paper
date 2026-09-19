@@ -234,6 +234,10 @@ every push to `main`, type-checks, builds, and publishes `dist/`.
    git push -u origin main
    ```
 
+   The workflow triggers on pushes to `main`. If your default branch is called
+   something else, change the branch name at the top of
+   `.github/workflows/deploy.yml` to match.
+
 2. **Turn Pages on.** Repository → Settings → Pages → *Build and deployment* →
    **Source: GitHub Actions**. Not "Deploy from a branch" — the workflow
    publishes an artifact directly.
