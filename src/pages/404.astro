@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import InkHeading from '../components/InkHeading.astro';
+---
+
+<Base title="Not found" description="That page is not here.">
+  <div class="shell shell--narrow notfound">
+    <InkHeading as="h1">Not here</InkHeading>
+    <p class="notfound__text">
+      The page you asked for has moved, or never existed, or was quietly
+      withdrawn. All three happen.
+    </p>
+    <p>
+      <a class="ink-link" href="/">Back to the beginning</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .notfound__text {
+    margin-block: var(--space-l) var(--space-m);
+    color: var(--ink-muted);
+    max-width: 36ch;
+    font-size: var(--step-1);
+  }
+</style>

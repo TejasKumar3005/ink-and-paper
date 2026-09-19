@@ -1,0 +1,101 @@
+---
+import Base from '../layouts/Base.astro';
+import InkHeading from '../components/InkHeading.astro';
+import InkDivider from '../components/InkDivider.astro';
+import { site } from '../site.config';
+import { formatDate, getArticles, getStory, isoDate } from '../lib/content';
+
+const [articles, story] = await Promise.all([getArticles(), getStory()]);
+const latest = articles[0];
+const firstPhoto = story[0];
+
+/** The intro lede marks one word with {braces}; that word gets the accent. */
+const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
+---
+
+<Base title={site.name} description={site.description}>
+  <div class="shell page-top page-bottom">
+    <section class="intro" aria-labelledby="intro-heading">
+      <h1 id="intro-heading" class="lede">
+        {before}<span class="accent">{accent}</span>{after}
+      </h1>
+
+      <div class="intro__body" data-reveal style="--reveal-delay:180ms">
+        {site.intro.body.map((paragraph) => <p>{paragraph}</p>)}
+      </div>
+
+      <div class="now" data-reveal style="--reveal-delay:300ms">
+        <p class="meta">
+          {site.intro.now.label} — {site.intro.now.updated}
+        </p>
+        <p class="now__text">{site.intro.now.text}</p>
+      </div>
+    </section>
+
+    <InkDivider />
+
+    <section aria-labelledby="onward-heading">
+      <InkHeading as="h2" id="onward-heading" class="section-label">Onward</InkHeading>
+
+      <div class="onward">
+        {
+          firstPhoto && (
+            <a class="onward__item" href="/story/" data-reveal>
+              <span class="meta">Story lane · {story.length} photographs</span>
+              <h3 class="onward__title">{firstPhoto.data.title}</h3>
+              <p class="onward__blurb">
+                A sequence of pictures, read top to bottom, each with the reason it
+                was taken beside it.
+              </p>
+              <span class="ink-link onward__more meta meta--plain">Walk the lane</span>
+            </a>
+          )
+        }
+
+        {
+          latest && (
+            <a
+              class="onward__item"
+              href={`/writing/${latest.id}/`}
+              data-reveal
+              style="--reveal-delay:140ms"
+            >
+              <span class="meta">
+                Latest ·{' '}
+                <time datetime={isoDate(latest.data.date)}>
+                  {formatDate(latest.data.date)}
+                </time>
+              </span>
+              <h3 class="onward__title">{latest.data.title}</h3>
+              <p class="onward__blurb">{latest.data.description}</p>
+              <span class="ink-link onward__more meta meta--plain">Read it</span>
+            </a>
+          )
+        }
+      </div>
+
+      <p class="onward__all" data-reveal style="--reveal-delay:240ms">
+        <a class="ink-link" href="/writing/">Everything else I have written</a>
+      </p>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .intro > * + * {
+    margin-block-start: var(--space-l);
+  }
+
+  .intro__body,
+  .now {
+    margin-block-start: var(--space-xl);
+  }
+
+  .intro {
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .onward__all {
+    margin-block-start: var(--space-xl);
+  }
+</style>

@@ -1,0 +1,89 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import InkHeading from '../../components/InkHeading.astro';
+import { site } from '../../site.config';
+import { formatDate, getWriting, isoDate, readingTime } from '../../lib/content';
+
+const entries = await getWriting();
+
+/** Thoughts are short enough to render inline; articles only need a summary. */
+const stream = await Promise.all(
+  entries.map(async (entry) => ({
+    entry,
+    Content: entry.data.kind === 'thought' ? (await render(entry)).Content : null,
+    minutes: readingTime(entry.body),
+  })),
+);
+---
+
+<Base
+  title="Writing"
+  description={`Essays and shorter notes by ${site.name}, in one chronological stream.`}
+>
+  <div class="shell shell--narrow page-top page-bottom">
+    <header class="writing__head">
+      <InkHeading as="h1">Writing</InkHeading>
+      <p class="writing__standfirst">
+        <!-- TODO: your own framing for the stream. -->
+        Long pieces and short ones, in the order they were written. The short
+        ones are here in full; the long ones have a page of their own.
+      </p>
+    </header>
+
+    <ol class="stream" role="list">
+      {
+        stream.map(({ entry, Content, minutes }, index) => (
+          <li
+            id={entry.id}
+            class:list={['entry', `entry--${entry.data.kind}`]}
+            data-reveal
+            style={`--reveal-delay:${Math.min(index, 4) * 70}ms`}
+          >
+            <p class="entry__head meta">
+              <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
+              <span class:list={['kind', `kind--${entry.data.kind}`]}>
+                {entry.data.kind === 'article' ? `Article · ${minutes} min` : 'Thought'}
+              </span>
+            </p>
+
+            {entry.data.kind === 'article' ? (
+              <>
+                <h2 class="entry__title">
+                  <a class="ink-link" href={`/writing/${entry.id}/`}>
+                    {entry.data.title}
+                  </a>
+                </h2>
+                {entry.data.description && (
+                  <p class="entry__summary">{entry.data.description}</p>
+                )}
+              </>
+            ) : (
+              <div class="entry__thought">{Content && <Content />}</div>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+
+    <p class="writing__feed meta meta--plain">
+      <a class="ink-link" href="/rss.xml">Subscribe by RSS</a>
+    </p>
+  </div>
+</Base>
+
+<style>
+  .writing__head {
+    padding-block: var(--space-l) var(--space-xl);
+  }
+
+  .writing__standfirst {
+    margin-block-start: var(--space-m);
+    color: var(--ink-muted);
+    max-width: 40ch;
+  }
+
+  .writing__feed {
+    margin-block-start: var(--space-2xl);
+  }
+</style>

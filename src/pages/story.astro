@@ -1,0 +1,94 @@
+---
+import { Image } from 'astro:assets';
+import { render } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import InkHeading from '../components/InkHeading.astro';
+import { site } from '../site.config';
+import { formatDate, getStory, isoDate } from '../lib/content';
+
+const entries = await getStory();
+
+/** Render each entry's Markdown body up front so the template stays declarative. */
+const lane = await Promise.all(
+  entries.map(async (entry, index) => {
+    const { Content } = await render(entry);
+    return { entry, Content, index };
+  }),
+);
+---
+
+<Base
+  title="Story lane"
+  description={`Photographs by ${site.name}, in sequence, each with the reason it was taken beside it.`}
+>
+  <div class="shell page-top page-bottom">
+    <header class="lane__head">
+      <InkHeading as="h1" class="lane__title">Story lane</InkHeading>
+      <p class="lane__standfirst">
+        <!-- TODO: your own introduction to the sequence. -->
+        Pictures in the order they happened, which is not the order they were
+        understood. Read it downwards.
+      </p>
+    </header>
+
+    {
+      lane.map(({ entry, Content, index }) => (
+        <article
+          class:list={['story', index % 2 === 0 ? 'story--right' : 'story--left']}
+          aria-labelledby={`story-${entry.id}`}
+        >
+          <figure class="story__figure" data-develop>
+            <span class="meta story__index" aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <Image
+              src={entry.data.image}
+              alt={entry.data.alt}
+              widths={[480, 800, 1200]}
+              sizes="(min-width: 56rem) 56vw, 100vw"
+              loading={index === 0 ? 'eager' : 'lazy'}
+              fetchpriority={index === 0 ? 'high' : 'auto'}
+              quality={72}
+            />
+          </figure>
+
+          <div class="story__text" data-reveal style="--reveal-delay:120ms">
+            <p class="meta">
+              <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
+            </p>
+            <h2 class="story__title" id={`story-${entry.id}`}>
+              {entry.data.title}
+            </h2>
+            <div class="story__body">
+              <Content />
+            </div>
+            {entry.data.meta && (
+              <p class="meta story__meta">
+                <span>{entry.data.meta}</span>
+              </p>
+            )}
+          </div>
+        </article>
+      ))
+    }
+  </div>
+</Base>
+
+<style>
+  /* The lane earns a wider stage than the reading pages. */
+  .shell {
+    --content-width: 78rem;
+  }
+
+  .lane__head {
+    max-width: var(--measure);
+    padding-block: var(--space-l) 0;
+  }
+
+  .lane__standfirst {
+    margin-block-start: var(--space-m);
+    font-size: var(--step-1);
+    color: var(--ink-muted);
+    max-width: 38ch;
+  }
+</style>
