@@ -19,11 +19,17 @@ export type SocialLink = {
 
 export const site = {
   // TODO: your name, as you want it set in type at the top of every page.
-  name: 'Iris Calder',
+  // (Read off the signature on the Air City cover — correct it if it is wrong.)
+  name: 'Tejas Kumar',
 
-  // TODO: the canonical URL of the deployed site. Used for sitemap, RSS and
-  // OpenGraph tags. No trailing slash.
-  url: 'https://example.com',
+  // TODO: the full URL the site is deployed at. Used for canonical links, the
+  // sitemap, RSS, OpenGraph — and, because it may include a path, for Astro's
+  // `base`. No trailing slash.
+  //
+  //   GitHub Pages, project site:  https://YOU.github.io/REPO
+  //   GitHub Pages, user site:     https://YOU.github.io
+  //   Custom domain:               https://yourdomain.com
+  url: 'https://YOUR-USERNAME.github.io/ink-and-paper',
 
   // TODO: a short line that sits under your name in the header and in search
   // results. Aim for six words, not sixteen.
@@ -31,7 +37,7 @@ export const site = {
 
   // TODO: used for <meta name="description"> on pages that do not set their own.
   description:
-    'The personal site of Iris Calder — essays on craft and attention, a photographic story lane, and notes in progress.',
+    'The personal site of Tejas Kumar — a photographic story lane, writing in progress, and a short introduction.',
 
   // TODO: your email address. Rendered as a mailto: link on the contact page.
   email: 'hello@example.com',
@@ -44,19 +50,19 @@ export const site = {
     // TODO: the first thing a visitor reads. One sentence, quietly confident.
     // The word wrapped in {accent} is set in the accent colour with an ink blot
     // blooming behind it.
-    lede: 'I make things that ask for {attention} and give it back.',
+    lede: 'I build things, and I keep the {drawings}.',
 
     // TODO: two or three short paragraphs. Who you are, what you are into.
     body: [
-      'I am a designer and writer living by the coast. For the better part of a decade I have worked on typography, editorial systems, and the quiet infrastructure that lets other people publish well.',
-      'Outside of that: long walks with a film camera, letterpress that I am not yet good at, and a standing argument with myself about whether a thing is finished.',
+      'I am an engineer. Most of what I make starts as a page of pencil, gets argued with for a while, and eventually turns into something that runs.',
+      'Before that: a lot of karate, a floating city that was never going to fly, and a desk I have still not really moved away from. The story lane has the evidence.',
     ],
 
     // TODO: what you are working on right now. This is the line people come
     // back for — keep it current.
     now: {
       label: 'Currently',
-      text: 'Building a small press for short-run photo books, and writing an essay series about attention as a craft skill.',
+      text: 'Say what you are working on this month. One sentence is plenty — this is the line people come back to check.',
       // TODO: set this to the month you last updated the line above.
       updated: 'September 2026',
     },

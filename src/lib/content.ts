@@ -1,5 +1,6 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
 import { site } from '../site.config';
+import { url } from './url';
 
 export type WritingEntry = CollectionEntry<'writing'>;
 export type StoryEntry = CollectionEntry<'story'>;
@@ -26,8 +27,9 @@ export async function getArticles(): Promise<WritingEntry[]> {
 export async function getStory(): Promise<StoryEntry[]> {
   const entries = await getCollection('story', published);
   return entries.sort((a: StoryEntry, b: StoryEntry) => {
-    const byOrder = (a.data.order ?? Infinity) - (b.data.order ?? Infinity);
-    if (byOrder !== 0 && Number.isFinite(byOrder)) return byOrder;
+    const ao = a.data.order ?? Number.MAX_SAFE_INTEGER;
+    const bo = b.data.order ?? Number.MAX_SAFE_INTEGER;
+    if (ao !== bo) return ao - bo;
     return b.data.date.valueOf() - a.data.date.valueOf();
   });
 }
@@ -51,7 +53,7 @@ export function readingTime(body: string | undefined): number {
 
 /** Articles link out; thoughts live in the stream and are linked by anchor. */
 export const entryHref = (entry: WritingEntry) =>
-  entry.data.kind === 'article' ? `/writing/${entry.id}/` : `/writing/#${entry.id}`;
+  entry.data.kind === 'article' ? url(`/writing/${entry.id}/`) : url(`/writing/#${entry.id}`);
 
 export const entryTitle = (entry: WritingEntry) =>
   entry.data.title ?? `A note, ${formatDate(entry.data.date)}`;
