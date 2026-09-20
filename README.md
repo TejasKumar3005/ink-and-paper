@@ -1,5 +1,8 @@
 # Ink & Paper
 
+**Live at [tejaskumar3005.github.io/ink-and-paper](https://tejaskumar3005.github.io/ink-and-paper/)**,
+deployed from `main` by [the workflow](.github/workflows/deploy.yml) on every push.
+
 A personal website: an introduction, a photographic story lane, a stream of
 writing, and a contact page. Built with [Astro](https://astro.build), shipping
 about 19 kB of JavaScript in total (7 kB over the wire) — the page-transition
@@ -226,6 +229,10 @@ path in it, every internal link picks that path up automatically.
 
 A workflow is already committed at `.github/workflows/deploy.yml`. It runs on
 every push to `main`, type-checks, builds, and publishes `dist/`.
+
+This repository is already set up: Pages is on, the source is GitHub Actions,
+and `url` points at the live address. The steps below are what it took, in case
+you move it or start again somewhere else.
 
 1. **Push the repository to GitHub.**
 
