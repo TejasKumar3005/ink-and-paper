@@ -26,10 +26,10 @@ export const site = {
   // sitemap, RSS, OpenGraph — and, because it may include a path, for Astro's
   // `base`. No trailing slash.
   //
-  //   GitHub Pages, project site:  https://YOU.github.io/REPO
+  //   GitHub Pages, project site:  https://YOU.github.io/REPO   ← this one
   //   GitHub Pages, user site:     https://YOU.github.io
   //   Custom domain:               https://yourdomain.com
-  url: 'https://YOUR-USERNAME.github.io/ink-and-paper',
+  url: 'https://tejaskumar3005.github.io/ink-and-paper',
 
   // TODO: a short line that sits under your name in the header and in search
   // results. Aim for six words, not sixteen.
