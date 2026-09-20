@@ -1,0 +1,8 @@
+ink-splash.png is derived from CodyHouse's Ink Transition Effect.
+
+  https://codyhouse.co/gem/ink-transition-effect/
+  https://github.com/CodyHouse/ink-transition-effect
+  License: https://codyhouse.co/mit
+
+The sprite was recolored to this site's ink (#1a1a18) and the last four
+frames were filled solid so the page swap is never seen through pinholes.

@@ -6,13 +6,6 @@
    Only opacity, transform and filter are animated.
    ========================================================================== */
 
-/* The bloom radius is a registered property so it can be interpolated. */
-@property --bloom-r {
-  syntax: '<length>';
-  inherits: true;
-  initial-value: 0px;
-}
-
 @layer motion {
   /* ------------------------------------------------------------------------
      Scroll reveals — fade up with a blur that resolves.
@@ -130,113 +123,69 @@
   }
 
   /* ------------------------------------------------------------------------
-     Page transitions: an ink bloom washes across the viewport, then recedes.
-     The mask edge is displaced by feTurbulence so it is never a clean circle.
+     Page transitions: CodyHouse's ink-drop sprite, played with steps().
+     License: https://codyhouse.co/mit
+     25 frames, 16:9. The film is sized to cover the viewport without
+     stretching a frame, then translated one frame at a time.
      ---------------------------------------------------------------------- */
-  .ink-bloom {
+  .ink-splash {
     position: fixed;
     inset: 0;
     z-index: 90;
     pointer-events: none;
     visibility: hidden;
-    contain: strict;
-    --bloom-x: 50%;
-    --bloom-y: 50%;
-    --bloom-r: 0px;
+    overflow: hidden;
   }
 
-  .ink-bloom[data-state='in'],
-  .ink-bloom[data-state='out'] {
+  .ink-splash[data-state='in'],
+  .ink-splash[data-state='out'] {
     visibility: visible;
   }
 
-  /* No clipping here: the wash has to overhang the viewport so the
-     displacement filter has real ink to pull inwards at the edges. The
-     containment on .ink-bloom crops the filtered result back to the screen. */
-  .ink-bloom__filtered {
+  .ink-splash__film {
+    /* Cover: at least as wide as the viewport, at least as tall. */
+    --frame-w: max(100vw, calc(100vh * 16 / 9));
+    --frame-h: calc(var(--frame-w) * 9 / 16);
     position: absolute;
-    inset: 0;
+    left: 50%;
+    top: 50%;
+    width: calc(var(--frame-w) * 25);
+    height: var(--frame-h);
+    background-image: var(--splash-src);
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    /* -2% centres frame 1 of 25 (50 / 25). */
+    transform: translate(-2%, -50%);
   }
 
-  /* The filter is only mounted while the bloom runs: it costs nothing idle. */
-  .ink-bloom[data-state='in'] .ink-bloom__filtered,
-  .ink-bloom[data-state='out'] .ink-bloom__filtered {
-    filter: url(#ink-wash);
+  .ink-splash[data-state='in'] .ink-splash__film {
+    animation: splash-in 800ms steps(24) forwards;
   }
 
-  .ink-bloom__wash {
-    position: absolute;
-    inset: -14%;
-    background: var(--ink);
-    -webkit-mask-image: radial-gradient(
-      circle var(--bloom-r) at var(--bloom-x) var(--bloom-y),
-      #000 0 68%,
-      rgba(0, 0, 0, 0.72) 86%,
-      rgba(0, 0, 0, 0.2) 96%,
-      transparent 100%
-    );
-    mask-image: radial-gradient(
-      circle var(--bloom-r) at var(--bloom-x) var(--bloom-y),
-      #000 0 68%,
-      rgba(0, 0, 0, 0.72) 86%,
-      rgba(0, 0, 0, 0.2) 96%,
-      transparent 100%
-    );
+  .ink-splash[data-state='out'] .ink-splash__film {
+    animation: splash-out 800ms steps(24) forwards;
   }
 
-  /* Receding: the same soft edge, inverted, opening outward like drying ink. */
-  .ink-bloom[data-state='out'] .ink-bloom__wash {
-    -webkit-mask-image: radial-gradient(
-      circle var(--bloom-r) at var(--bloom-x) var(--bloom-y),
-      transparent 0 68%,
-      rgba(0, 0, 0, 0.28) 86%,
-      rgba(0, 0, 0, 0.8) 96%,
-      #000 100%
-    );
-    mask-image: radial-gradient(
-      circle var(--bloom-r) at var(--bloom-x) var(--bloom-y),
-      transparent 0 68%,
-      rgba(0, 0, 0, 0.28) 86%,
-      rgba(0, 0, 0, 0.8) 96%,
-      #000 100%
-    );
-  }
-
-  .ink-bloom[data-state='in'] {
-    animation: bloom-in 760ms cubic-bezier(0.42, 0.04, 0.32, 1) forwards;
-  }
-
-  .ink-bloom[data-state='out'] {
-    animation: bloom-out 900ms cubic-bezier(0.35, 0.08, 0.45, 1) forwards;
-  }
-
-  /* Radii are sized so the wash always reaches the far corner, whichever
-     link was clicked, and clears again only near the end of the recede. */
-  @keyframes bloom-in {
+  @keyframes splash-in {
     from {
-      --bloom-r: 0px;
+      transform: translate(-2%, -50%);
     }
     to {
-      --bloom-r: 155vmax;
+      /* -98% centres frame 25 (2 + 96). */
+      transform: translate(-98%, -50%);
     }
   }
 
-  /* The last third lifts rather than retreats — ink drying, not a wipe. */
-  @keyframes bloom-out {
+  @keyframes splash-out {
     from {
-      --bloom-r: 0px;
-      opacity: 1;
-    }
-    64% {
-      opacity: 1;
+      transform: translate(-98%, -50%);
     }
     to {
-      --bloom-r: 108vmax;
-      opacity: 0;
+      transform: translate(-2%, -50%);
     }
   }
 
-  /* Our bloom is the transition; the router's default crossfade would fight it. */
+  /* The sprite is the transition; the router's default crossfade would fight it. */
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
@@ -272,7 +221,7 @@
       animation: none !important;
     }
 
-    .ink-bloom {
+    .ink-splash {
       display: none !important;
     }
 

@@ -3,7 +3,7 @@ import BaseHead from '../components/BaseHead.astro';
 import Masthead from '../components/Masthead.astro';
 import Colophon from '../components/Colophon.astro';
 import InkDefs from '../components/InkDefs.astro';
-import InkBloom from '../components/InkBloom.astro';
+import InkSplash from '../components/InkSplash.astro';
 import { site } from '../site.config';
 
 interface Props {
@@ -31,7 +31,7 @@ const { title, description, type, publishedTime } = Astro.props;
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <InkDefs />
-    <InkBloom />
+    <InkSplash />
     <Masthead />
     <main id="main" tabindex="-1">
       <slot />

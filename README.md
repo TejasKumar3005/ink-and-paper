@@ -6,7 +6,7 @@ deployed from `main` by [the workflow](.github/workflows/deploy.yml) on every pu
 A personal website: an introduction, a photographic story lane, a stream of
 writing, and a contact page. Built with [Astro](https://astro.build), shipping
 about 19 kB of JavaScript in total (7 kB over the wire) — the page-transition
-router, the ink bloom, and one `IntersectionObserver`. Everything else is CSS
+router, the ink splash, and one `IntersectionObserver`. Everything else is CSS
 and SVG.
 
 ---
@@ -205,12 +205,15 @@ you would rather self-host a serif, Astro's `fonts` config is the place.
 
 ### The motion
 
-Every animation is in `motion.css` and is meant to read as ink: an irregular
-bloom that washes over the viewport between pages, a brush stroke that draws
-itself under headings, text that fades up out of a soft blur, photographs that
-develop from desaturated and soft to clear. The irregular edges come from
-`feTurbulence` / `feDisplacementMap` filters defined in
-`src/components/InkDefs.astro`.
+Every animation is in `motion.css` and is meant to read as ink: a drop that
+splashes across the viewport between pages, a brush stroke that draws itself
+under headings, text that fades up out of a soft blur, photographs that
+develop from desaturated and soft to clear.
+
+The page transition is [CodyHouse's ink-drop sprite](https://codyhouse.co/gem/ink-transition-effect/)
+— the same PNG-sequence-plus-`steps()` technique used on Sevenhills — not a
+live SVG filter. The heading strokes and dividers still use the
+`feTurbulence` / `feDisplacementMap` filters in `src/components/InkDefs.astro`.
 
 All of it is disabled under `prefers-reduced-motion: reduce`, which falls back
 to instant, static states. If you turn that setting on in your OS, the site

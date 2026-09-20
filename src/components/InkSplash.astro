@@ -1,0 +1,80 @@
+---
+/**
+ * Page transition: a real ink-drop sprite, not a filtered circle.
+ *
+ * The film is CodyHouse's 25-frame PNG sequence (MIT), recolored to the
+ * site ink. CSS `steps(24)` plays it like a flipbook — that is the
+ * technique behind every well-known ink transition on the web
+ * (Sevenhills, CodyHouse, Codrops). No SVG filter, no per-frame JS.
+ *
+ * `transition:persist` keeps the overlay alive across the swap so the
+ * cover never lifts early.
+ *
+ * License: https://codyhouse.co/mit
+ */
+import { url } from '../lib/url';
+
+const sprite = url('/ink-splash.png');
+---
+
+<div
+  class="ink-splash"
+  data-state="idle"
+  aria-hidden="true"
+  transition:persist="ink-splash"
+  style={`--splash-src: url('${sprite}')`}
+>
+  <div class="ink-splash__film"></div>
+</div>
+
+<script>
+  const ROOT_ATTR = 'data-ink-splash-ready';
+
+  // One set of listeners for the document, even if ClientRouter re-runs this.
+  if (
+    !document.documentElement.hasAttribute(ROOT_ATTR) &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  ) {
+    document.documentElement.setAttribute(ROOT_ATTR, '');
+
+    /** Matches the CSS duration. The last frame is a solid cover. */
+    const WASH_IN = 800;
+    const splash = () => document.querySelector<HTMLElement>('.ink-splash');
+
+    function run(node: HTMLElement, state: 'in' | 'out') {
+      if (node.dataset.state === state) {
+        node.setAttribute('data-state', 'idle');
+        void node.offsetWidth;
+      }
+      node.setAttribute('data-state', state);
+    }
+
+    document.addEventListener('astro:before-preparation', (event) => {
+      const node = splash();
+      if (!node) return;
+      const prepare = event as typeof event & { loader: () => Promise<void> };
+      const load = prepare.loader;
+
+      prepare.loader = async () => {
+        run(node, 'in');
+        // Hold the swap until the drop has covered the page.
+        await Promise.all([
+          load(),
+          new Promise((resolve) => setTimeout(resolve, WASH_IN)),
+        ]);
+      };
+    });
+
+    document.addEventListener('astro:after-swap', () => {
+      const node = splash();
+      if (!node || node.getAttribute('data-state') !== 'in') return;
+      run(node, 'out');
+    });
+
+    document.addEventListener('animationend', (event) => {
+      const film = event.target as HTMLElement;
+      const node = film?.closest?.('.ink-splash') as HTMLElement | null;
+      if (node?.dataset.state === 'out') node.setAttribute('data-state', 'idle');
+    });
+  }
+</script>
