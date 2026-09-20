@@ -803,8 +803,10 @@
   .prose .article-media video {
     display: block;
     width: 100%;
+    max-width: 28rem;
     height: auto;
-    background: var(--paper-sunk);
+    margin-inline: auto;
+    background: var(--paper);
   }
 
   .prose img + em,

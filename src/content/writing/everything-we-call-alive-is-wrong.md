@@ -17,7 +17,7 @@ A mule cannot reproduce. A virus cannot metabolise on its own. Fire eats, grows,
 
 Fire eats, grows, spreads, and dies. Our definition of life was never equipped to explain why it doesn't count.
 
-![A still from Conway's Game of Life, glowing cells on a dark grid](../../assets/writing/everything-we-call-alive-is-wrong/01.jpg)
+![A campfire and a young plant, side by side on black](../../assets/writing/everything-we-call-alive-is-wrong/01.jpg)
 
 <aside class="pullquote">We have been defining life by its costume, not its character.</aside>
 
@@ -72,7 +72,7 @@ The entropy angle: life, under every framework, is essentially a local reversal 
 
 ## The planet that's alive, and it's not science fiction
 
-![A planet drawn as a single living organism, with arrows of growth instead of copies](../../assets/writing/everything-we-call-alive-is-wrong/04.jpg)
+![A cratered planetary face with glowing eyes, set against a starfield](../../assets/writing/everything-we-call-alive-is-wrong/04.jpg)
 
 Now for the idea that should genuinely unsettle you.
 
