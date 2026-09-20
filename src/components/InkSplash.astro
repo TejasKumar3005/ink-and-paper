@@ -102,7 +102,7 @@ const sprite = url('/ink-splash.png');
     document.addEventListener('astro:before-swap', (event) => {
       const next = (event as Event & { newDocument?: Document }).newDocument;
       // First paint of the incoming page is invisible; it fades in after the swap.
-      next?.documentElement.classList.add('is-page-pending');
+      next?.documentElement.classList.add('js', 'is-page-pending');
     });
 
     document.addEventListener('astro:after-swap', () => {

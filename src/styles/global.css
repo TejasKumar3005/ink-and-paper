@@ -294,19 +294,20 @@
     flex: 1 0 auto;
   }
 
-  /* Story lane: with JS the page is a viewport, not a long scroll. */
-  html.is-lane.js,
-  html.is-lane.js body {
+  /* Story lane is a viewport, not a long scroll — even on first paint,
+     before ClientRouter has copied the `js` class across. */
+  html.is-lane,
+  html.is-lane body {
     height: 100dvh;
     overflow: hidden;
     overscroll-behavior: none;
   }
 
-  html.is-lane.js body {
+  html.is-lane body {
     min-height: 100dvh;
   }
 
-  html.is-lane.js main {
+  html.is-lane main {
     flex: 1 1 auto;
     min-height: 0;
     display: flex;
@@ -314,7 +315,7 @@
     overflow: hidden;
   }
 
-  html.is-lane.js .lane {
+  html.is-lane .lane {
     overflow: hidden;
   }
 
@@ -336,7 +337,7 @@
     padding-block: var(--space-l) var(--space-m);
   }
 
-  html.is-lane.js .masthead {
+  html.is-lane .masthead {
     padding-block: var(--space-s) var(--space-xs);
   }
 
@@ -360,11 +361,11 @@
   }
 
   @media (max-width: 40rem) {
-    html.is-lane.js .masthead__tagline {
+    html.is-lane .masthead__tagline {
       display: none;
     }
 
-    html.is-lane.js .masthead {
+    html.is-lane .masthead {
       padding-block: var(--space-xs);
     }
   }
@@ -736,8 +737,8 @@
     }
   }
 
-  /* Without JS the photographs still stack so the page is readable. */
-  html:not(.js) .story + .story {
+  /* Without JS, and only off the lane, photographs still stack. */
+  html:not(.js):not(.is-lane) .story + .story {
     margin-block-start: var(--space-3xl);
     padding-block-start: var(--space-xl);
   }
@@ -747,13 +748,13 @@
   }
 
   /* One photograph at a time: the next story fades in over the last. */
-  .js .lane__viewport {
+  html.is-lane .lane__viewport {
     overflow: hidden;
     touch-action: none;
     isolation: isolate;
   }
 
-  .js .story {
+  html.is-lane .story {
     position: absolute;
     inset: 0;
     width: 100%;
@@ -768,28 +769,28 @@
     backface-visibility: hidden;
   }
 
-  .js .story.is-from-next {
+  html.is-lane .story.is-from-next {
     transform: translate3d(5%, 0, 0);
   }
 
-  .js .story.is-from-prev {
+  html.is-lane .story.is-from-prev {
     transform: translate3d(-5%, 0, 0);
   }
 
-  .js .story.is-current {
+  html.is-lane .story.is-current {
     opacity: 1;
     transform: none;
     pointer-events: auto;
     z-index: 3;
   }
 
-  .js .story.is-leaving {
+  html.is-lane .story.is-leaving {
     opacity: 1 !important;
     transform: none;
     z-index: 2;
   }
 
-  .js .story.is-past:not(.is-leaving) {
+  html.is-lane .story.is-past:not(.is-leaving) {
     opacity: 0;
     transform: none;
   }

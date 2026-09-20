@@ -70,7 +70,16 @@ const fullTitle = title === site.name ? title : `${title} — ${site.name}`;
 
 <ClientRouter />
 
-<!-- Reveal animations only hide content when they can also un-hide it. -->
+<!-- Reveal animations only hide content when they can also un-hide it.
+     ClientRouter replaces <html> attributes from the incoming document,
+     which is served without `js` — copy it across so the story lane
+     does not fall back to a stacked scroll page. -->
 <script is:inline>
   document.documentElement.classList.add('js');
+  document.addEventListener('astro:before-swap', (event) => {
+    event.newDocument?.documentElement.classList.add('js');
+  });
+  document.addEventListener('astro:after-swap', () => {
+    document.documentElement.classList.add('js');
+  });
 </script>

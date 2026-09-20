@@ -252,6 +252,7 @@ const lane = await Promise.all(
       const dx = wheelPx(event, true);
       if (Math.abs(dy) < Math.abs(dx)) return;
       event.preventDefault();
+      if (document.documentElement.classList.contains('is-page-pending')) return;
       noteInput();
       if (busy) return;
       if (Math.abs(dy) < WHEEL_PX) return;

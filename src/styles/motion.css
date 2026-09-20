@@ -49,32 +49,32 @@
      Story lane: the next photograph fades in over the last. Photos and
      captions stay sharp — no develop/reveal fighting the fade.
      ---------------------------------------------------------------------- */
-  .js .story {
+  html.is-lane .story {
     transition:
       opacity var(--dur-slide) var(--ease-ink),
       transform var(--dur-slide) var(--ease-ink);
   }
 
-  .js .story.is-leaving,
-  .js .lane.is-jumping .story {
+  html.is-lane .story.is-leaving,
+  html.is-lane .lane.is-jumping .story {
     transition: none !important;
   }
 
-  .js .lane .story [data-reveal],
-  .js .lane .story [data-reveal].is-revealed,
-  .js .lane .story [data-develop] img,
-  .js .lane .story [data-develop].is-developed img {
+  html.is-lane .story [data-reveal],
+  html.is-lane .story [data-reveal].is-revealed,
+  html.is-lane .story [data-develop] img,
+  html.is-lane .story [data-develop].is-developed img {
     opacity: 1;
     transform: none;
     filter: none;
     transition: none;
   }
 
-  .js .lane__dot {
+  html.is-lane .lane__dot {
     transition: background-color 320ms var(--ease-ink), transform 320ms var(--ease-ink);
   }
 
-  .js .lane__dot[aria-current='true'] {
+  html.is-lane .lane__dot[aria-current='true'] {
     transform: scale(1.28);
   }
 
@@ -304,25 +304,25 @@
       transition: none !important;
     }
 
-    .js .story,
-    .js .story.is-from-next,
-    .js .story.is-from-prev,
-    .js .story.is-leaving {
+    html.is-lane .story,
+    html.is-lane .story.is-from-next,
+    html.is-lane .story.is-from-prev,
+    html.is-lane .story.is-leaving {
       transform: none !important;
       opacity: 0;
       transition: opacity 160ms linear !important;
     }
 
-    .js .story.is-current,
-    .js .story.is-leaving {
+    html.is-lane .story.is-current,
+    html.is-lane .story.is-leaving {
       opacity: 1;
     }
 
-    .js .story.is-past:not(.is-leaving) {
+    html.is-lane .story.is-past:not(.is-leaving) {
       opacity: 0;
     }
 
-    .js .lane__dot {
+    html.is-lane .lane__dot {
       transition: none !important;
       transform: none !important;
     }
