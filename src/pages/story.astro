@@ -193,6 +193,22 @@ const lane = await Promise.all(
         slide.classList.remove('is-leaving', 'is-from-next', 'is-from-prev');
       });
 
+      let finished = false;
+      const finish = () => {
+        if (finished) return;
+        finished = true;
+        outgoing.classList.remove('is-leaving');
+        root.classList.remove('is-jumping');
+        incoming.removeEventListener('transitionend', onEnd);
+        window.clearTimeout(fallback);
+        releaseWhenQuiet();
+      };
+      const onEnd = (event: TransitionEvent) => {
+        if (event.target !== incoming || event.propertyName !== 'opacity') return;
+        finish();
+      };
+      const fallback = window.setTimeout(finish, animate ? durationMs() + 80 : 40);
+
       if (!animate) {
         root.classList.add('is-jumping');
         outgoing.classList.remove('is-current');
@@ -204,19 +220,12 @@ const lane = await Promise.all(
         void incoming.offsetWidth;
         incoming.classList.add('is-current');
         incoming.classList.remove('is-from-next', 'is-from-prev');
+        incoming.addEventListener('transitionend', onEnd);
       }
 
       index = clamped;
       syncChrome(clamped);
       history.replaceState(null, '', `#${slides[clamped].id}`);
-      window.setTimeout(
-        () => {
-          outgoing.classList.remove('is-leaving');
-          root.classList.remove('is-jumping');
-          releaseWhenQuiet();
-        },
-        animate ? durationMs() : 40,
-      );
     };
 
     const hashId = decodeURIComponent(location.hash.replace(/^#/, ''));

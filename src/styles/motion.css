@@ -57,7 +57,7 @@
 
   .js .story.is-leaving,
   .js .lane.is-jumping .story {
-    transition: none;
+    transition: none !important;
   }
 
   .js .lane .story [data-reveal],

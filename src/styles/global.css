@@ -784,7 +784,7 @@
   }
 
   .js .story.is-leaving {
-    opacity: 1;
+    opacity: 1 !important;
     transform: none;
     z-index: 2;
   }
