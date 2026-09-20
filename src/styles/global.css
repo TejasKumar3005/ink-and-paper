@@ -299,6 +299,7 @@
   html.is-lane.js body {
     height: 100dvh;
     overflow: hidden;
+    overscroll-behavior: none;
   }
 
   html.is-lane.js body {
