@@ -167,7 +167,7 @@
     top: var(--splash-y, 50%);
     width: 0;
     height: 0;
-    transform: rotate(var(--splash-rot, 0deg)) scale(var(--splash-scale, 1.12))
+    transform: rotate(var(--splash-rot, 0deg)) scale(var(--splash-scale, 1.25))
       scaleX(var(--splash-flip-x, 1)) scaleY(var(--splash-flip-y, 1));
   }
 

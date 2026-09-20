@@ -60,8 +60,11 @@ const sprite = url('/ink-splash.png');
 
       const flipX = Math.random() < 0.5 ? -1 : 1;
       const flipY = Math.random() < 0.5 ? -1 : 1;
-      const rot = Math.round(Math.random() * 48 - 24);
-      const reach = 1.12 + 2.3 * Math.max(Math.abs(x / 100 - 0.5), Math.abs(y / 100 - 0.5));
+      const rot = Math.round(Math.random() * 32 - 16);
+      const offset = Math.max(Math.abs(x / 100 - 0.5), Math.abs(y / 100 - 0.5));
+      const turn = (Math.abs(rot) * Math.PI) / 180;
+      const rotPad = Math.abs(Math.cos(turn)) + Math.abs(Math.sin(turn));
+      const reach = (1.14 + 2.5 * offset) * Math.max(1.1, rotPad);
 
       node.style.setProperty('--splash-x', `${x.toFixed(1)}%`);
       node.style.setProperty('--splash-y', `${y.toFixed(1)}%`);
