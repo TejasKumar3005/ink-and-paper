@@ -46,8 +46,8 @@
   }
 
   /* ------------------------------------------------------------------------
-     Story lane: fade-slide, like turning a story — the outgoing photograph
-     dissolves as it drifts left, the next arrives from the right.
+     Story lane: the next photograph fades in over the last. Photos and
+     captions stay sharp — no develop/reveal fighting the fade.
      ---------------------------------------------------------------------- */
   .js .story {
     transition:
@@ -55,7 +55,18 @@
       transform var(--dur-slide) var(--ease-ink);
   }
 
+  .js .story.is-leaving,
   .js .lane.is-jumping .story {
+    transition: none;
+  }
+
+  .js .lane .story [data-reveal],
+  .js .lane .story [data-reveal].is-revealed,
+  .js .lane .story [data-develop] img,
+  .js .lane .story [data-develop].is-developed img {
+    opacity: 1;
+    transform: none;
+    filter: none;
     transition: none;
   }
 
@@ -293,17 +304,21 @@
       transition: none !important;
     }
 
-    .js .story {
+    .js .story,
+    .js .story.is-from-next,
+    .js .story.is-from-prev,
+    .js .story.is-leaving {
       transform: none !important;
       opacity: 0;
       transition: opacity 160ms linear !important;
     }
 
-    .js .story.is-current {
+    .js .story.is-current,
+    .js .story.is-leaving {
       opacity: 1;
     }
 
-    .js .story.is-past {
+    .js .story.is-past:not(.is-leaving) {
       opacity: 0;
     }
 

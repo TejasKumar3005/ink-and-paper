@@ -35,17 +35,13 @@ const lane = await Promise.all(
       {
         lane.map(({ entry, Content, index }) => (
           <article
-            class:list={[
-              'story',
-              index % 2 === 0 ? 'story--right' : 'story--left',
-              index === 0 && 'is-current',
-            ]}
+            class:list={['story', index === 0 && 'is-current']}
             id={entry.id}
             aria-labelledby={`story-${entry.id}`}
             aria-hidden={index === 0 ? undefined : 'true'}
             data-lane-slide
           >
-            <figure class:list={['story__figure', index === 0 && 'is-developed']} data-develop>
+            <figure class="story__figure is-developed" data-develop>
               <span class="meta story__index" aria-hidden="true">
                 {String(index + 1).padStart(2, '0')}
               </span>
@@ -54,13 +50,13 @@ const lane = await Promise.all(
                 alt={entry.data.alt}
                 widths={[420, 680, 900, 1200, 1600]}
                 sizes="(min-width: 56rem) 46vw, calc(100vw - 2 * clamp(1.25rem, 5vw, 3.5rem))"
-                loading={index === 0 ? 'eager' : 'lazy'}
+                loading="eager"
                 fetchpriority={index === 0 ? 'high' : 'auto'}
                 quality={72}
               />
             </figure>
 
-            <div class:list={['story__text', index === 0 && 'is-revealed']} data-reveal>
+            <div class="story__text is-revealed" data-reveal>
               <p class="meta">
                 <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
               </p>
@@ -114,16 +110,16 @@ const lane = await Promise.all(
 
 <script>
   /**
-   * One photograph on screen. A wheel, swipe, or key advances exactly one
-   * slide: the current picture fades and drifts out, the next fades in.
+   * One photograph on screen. The next story fades in over the last —
+   * same frame, no blur, one gesture at a time.
    */
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function durationMs() {
-    if (REDUCED.matches) return 180;
+    if (REDUCED.matches) return 160;
     const raw = getComputedStyle(document.documentElement).getPropertyValue('--dur-slide');
     const ms = Number.parseFloat(raw);
-    return Number.isFinite(ms) ? ms : 1100;
+    return Number.isFinite(ms) ? ms : 640;
   }
 
   function initLane() {
@@ -149,20 +145,15 @@ const lane = await Promise.all(
     let lastInput = 0;
     let releaseTimer = 0;
     let touchY: number | null = null;
-    const REST_MS = 520;
-    const WHEEL_PX = 28;
+    const REST_MS = 200;
+    const WHEEL_PX = 32;
 
-    const paint = (next: number) => {
+    const syncChrome = (next: number) => {
       slides.forEach((slide, i) => {
         const active = i === next;
-        slide.classList.toggle('is-current', active);
         slide.classList.toggle('is-past', i < next);
         slide.toggleAttribute('aria-hidden', !active);
         slide.inert = !active;
-        if (active) {
-          slide.querySelector('[data-develop]')?.classList.add('is-developed');
-          slide.querySelector('[data-reveal]')?.classList.add('is-revealed');
-        }
       });
       dots.forEach((dot, i) => {
         if (i === next) dot.setAttribute('aria-current', 'true');
@@ -194,12 +185,33 @@ const lane = await Promise.all(
       if (busy && animate) return;
       busy = true;
       noteInput();
-      if (!animate) root.classList.add('is-jumping');
-      paint(clamped);
+
+      const outgoing = slides[index];
+      const incoming = slides[clamped];
+
+      slides.forEach((slide) => {
+        slide.classList.remove('is-leaving', 'is-from-next', 'is-from-prev');
+      });
+
+      if (!animate) {
+        root.classList.add('is-jumping');
+        outgoing.classList.remove('is-current');
+        incoming.classList.add('is-current');
+      } else {
+        outgoing.classList.add('is-leaving');
+        outgoing.classList.remove('is-current');
+        incoming.classList.add(clamped > index ? 'is-from-next' : 'is-from-prev');
+        void incoming.offsetWidth;
+        incoming.classList.add('is-current');
+        incoming.classList.remove('is-from-next', 'is-from-prev');
+      }
+
       index = clamped;
+      syncChrome(clamped);
       history.replaceState(null, '', `#${slides[clamped].id}`);
       window.setTimeout(
         () => {
+          outgoing.classList.remove('is-leaving');
           root.classList.remove('is-jumping');
           releaseWhenQuiet();
         },
@@ -210,7 +222,7 @@ const lane = await Promise.all(
     const hashId = decodeURIComponent(location.hash.replace(/^#/, ''));
     const fromHash = slides.findIndex((slide) => slide.id === hashId);
     if (fromHash > 0) go(fromHash, false);
-    else paint(index);
+    else syncChrome(index);
 
     const ac = new AbortController();
     const { signal } = ac;

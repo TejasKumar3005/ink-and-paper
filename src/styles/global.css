@@ -117,7 +117,7 @@
     --dur-reveal: 900ms;
     --dur-stroke: 1100ms;
     --dur-develop: 1500ms;
-    --dur-slide: 1100ms;
+    --dur-slide: 640ms;
     --dur-splash-in: 800ms;
     --dur-splash-fade: 700ms;
   }
@@ -717,7 +717,7 @@
 
   @media (min-width: 56rem) {
     .story {
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.4fr 0.72fr;
       gap: var(--space-xl);
     }
 
@@ -725,35 +725,14 @@
       max-height: min(74vh, 46rem);
     }
 
-    .story--left .story__figure {
-      grid-column: 2;
-      grid-row: 1;
-    }
-
-    .story--left .story__text {
-      grid-column: 1;
-      grid-row: 1;
-      justify-self: end;
-    }
-
-    .story--right .story__figure {
+    .story__figure {
       grid-column: 1;
       grid-row: 1;
     }
 
-    .story--right .story__text {
+    .story__text {
       grid-column: 2;
       grid-row: 1;
-    }
-  }
-
-  @media (min-width: 68rem) {
-    .story--left {
-      grid-template-columns: 0.72fr 1.4fr;
-    }
-
-    .story--right {
-      grid-template-columns: 1.4fr 0.72fr;
     }
   }
 
@@ -767,7 +746,7 @@
     display: none;
   }
 
-  /* One photograph at a time: a story-like fade-slide, not a vertical wipe. */
+  /* One photograph at a time: the next story fades in over the last. */
   .js .lane__viewport {
     overflow: hidden;
     touch-action: none;
@@ -784,20 +763,35 @@
     padding-block: var(--space-xs);
     background-color: var(--paper);
     opacity: 0;
-    transform: translate3d(12%, 0, 0);
+    transform: none;
     pointer-events: none;
+    backface-visibility: hidden;
+  }
+
+  .js .story.is-from-next {
+    transform: translate3d(5%, 0, 0);
+  }
+
+  .js .story.is-from-prev {
+    transform: translate3d(-5%, 0, 0);
   }
 
   .js .story.is-current {
     opacity: 1;
     transform: none;
     pointer-events: auto;
+    z-index: 3;
+  }
+
+  .js .story.is-leaving {
+    opacity: 1;
+    transform: none;
     z-index: 2;
   }
 
-  .js .story.is-past {
+  .js .story.is-past:not(.is-leaving) {
     opacity: 0;
-    transform: translate3d(-12%, 0, 0);
+    transform: none;
   }
 
   /* ---- Writing stream ---------------------------------------------------- */
