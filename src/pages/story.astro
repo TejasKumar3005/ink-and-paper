@@ -25,13 +25,7 @@ const lane = await Promise.all(
 >
   <section class="shell lane" data-lane aria-label="Story lane" aria-roledescription="carousel">
     <header class="lane__head">
-      <div>
-        <InkHeading as="h1" class="lane__title">Story lane</InkHeading>
-        <p class="lane__standfirst">
-          Pictures I have not grown out of, in the order they happened.
-          One at a time.
-        </p>
-      </div>
+      <InkHeading as="h1" class="lane__title">Story lane</InkHeading>
       <p class="lane__count meta" data-lane-count aria-live="polite" aria-atomic="true">
         <span data-lane-current>01</span> / {String(total).padStart(2, '0')}
       </p>
@@ -121,7 +115,7 @@ const lane = await Promise.all(
 <script>
   /**
    * One photograph on screen. A wheel, swipe, or key advances exactly one
-   * slide: the current picture leaves, the next one arrives.
+   * slide: the current picture fades and drifts out, the next fades in.
    */
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
 
@@ -129,7 +123,7 @@ const lane = await Promise.all(
     if (REDUCED.matches) return 180;
     const raw = getComputedStyle(document.documentElement).getPropertyValue('--dur-slide');
     const ms = Number.parseFloat(raw);
-    return Number.isFinite(ms) ? ms : 780;
+    return Number.isFinite(ms) ? ms : 1100;
   }
 
   function initLane() {
@@ -146,6 +140,7 @@ const lane = await Promise.all(
       slides.findIndex((slide) => slide.classList.contains('is-current')),
     );
     let locked = false;
+    let armed = true;
     let touchY: number | null = null;
 
     const paint = (next: number) => {
@@ -180,7 +175,7 @@ const lane = await Promise.all(
           root.classList.remove('is-jumping');
           locked = false;
         },
-        animate ? durationMs() + 40 : 40,
+        animate ? durationMs() + 220 : 40,
       );
     };
 
@@ -194,8 +189,17 @@ const lane = await Promise.all(
 
     const onWheel = (event: WheelEvent) => {
       if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
-      if (Math.abs(event.deltaY) < 12) return;
       event.preventDefault();
+      if (Math.abs(event.deltaY) < 6) {
+        if (!locked) armed = true;
+        return;
+      }
+      if (locked) {
+        armed = false;
+        return;
+      }
+      if (!armed) return;
+      armed = false;
       go(index + (event.deltaY > 0 ? 1 : -1));
     };
 

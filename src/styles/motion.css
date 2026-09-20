@@ -46,10 +46,13 @@
   }
 
   /* ------------------------------------------------------------------------
-     Story lane: one photograph slides out, the next slides in.
+     Story lane: fade-slide, like turning a story — the outgoing photograph
+     dissolves as it drifts left, the next arrives from the right.
      ---------------------------------------------------------------------- */
   .js .story {
-    transition: transform var(--dur-slide) var(--ease-ink);
+    transition:
+      opacity var(--dur-slide) var(--ease-ink),
+      transform var(--dur-slide) var(--ease-ink);
   }
 
   .js .lane.is-jumping .story {
