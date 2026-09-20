@@ -53,9 +53,11 @@
    -------------------------------------------------------------------------- */
 @layer tokens {
   :root {
-    color-scheme: light dark;
+    /* Light only, deliberately. `only light` also stops the browser from
+       auto-darkening form controls and scrollbars on a dark-set OS. */
+    color-scheme: only light;
 
-    /* Paper & ink — light */
+    /* Paper & ink */
     --paper: #faf8f4;
     --paper-sunk: #f2eee5;
     --paper-raised: #fdfcfa;
@@ -117,28 +119,6 @@
     --dur-develop: 1500ms;
   }
 
-  /* Dark mode is ink on black — warmer and lower-contrast than an inversion. */
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #100f0e;
-      --paper-sunk: #0a0a09;
-      --paper-raised: #171614;
-      --ink: #e9e4da;
-      --ink-muted: color-mix(in oklab, var(--ink) 76%, var(--paper));
-      --ink-faint: color-mix(in oklab, var(--ink) 62%, var(--paper));
-      --rule: color-mix(in oklab, var(--ink) 20%, var(--paper));
-      --rule-strong: color-mix(in oklab, var(--ink) 34%, var(--paper));
-
-      --accent: #a7abe0;
-      --accent-soft: color-mix(in oklab, var(--accent) 26%, var(--paper));
-      --accent-ink: color-mix(in oklab, var(--accent) 80%, var(--ink));
-
-      --grain-opacity: 0.07;
-      --grain-blend: screen;
-      --photo-shadow: 0 1px 2px color-mix(in oklab, #000 40%, transparent),
-        0 22px 60px -30px color-mix(in oklab, #000 80%, transparent);
-    }
-  }
 }
 
 /* --------------------------------------------------------------------------

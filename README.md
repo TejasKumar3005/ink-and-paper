@@ -190,9 +190,14 @@ External links, `mailto:` and `#fragments` need nothing.
 
 Colour, type and spacing are CSS custom properties at the top of
 `global.css` — a warm paper, a deep ink, and exactly one accent (a faded
-indigo). Dark mode follows `prefers-color-scheme` and is ink-on-black rather
-than an inversion; it is the second block of tokens in the same file. Changing
-the accent for the entire site is a one-line edit.
+indigo). Changing the accent for the entire site is a one-line edit.
+
+The site is light only, on purpose. `color-scheme: only light` on `:root` is
+what enforces it: without that line a browser on a dark-set OS will darken
+form controls and scrollbars even though the page never asked it to. If you
+ever want a dark palette, it is a second `:root` block under
+`@media (prefers-color-scheme: dark)` re-declaring the same token names — no
+other file needs to change.
 
 Type is set in a system serif stack with a monospace for dates and captions,
 so there are no webfonts to download and no layout shift while they arrive. If
