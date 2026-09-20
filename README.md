@@ -89,16 +89,16 @@ best against the image; the layout will take more if you have more.
 | `order` | no       | Force a position. Lower numbers first; otherwise newest date first.  |
 | `draft` | no       | `true` keeps it in `dev` but out of the built site.                  |
 
-The lane alternates which side the text sits on automatically, so you never
-have to think about it. On screens narrower than about 900 px the text stacks
-under the photograph.
+The lane shows one photograph at a time. Scroll, swipe, or the arrow keys
+move to the next picture with a slide; the dots at the bottom jump. Without
+JavaScript the photographs stack as a plain list.
 
 The four entries currently in the lane run oldest to newest, which is what the
 `order:` field is doing — without it the newest photograph would open the
 sequence. Drop `order:` from all four if you would rather read it backwards.
 
-Portrait, landscape and square all work; the lane is built around a column, not
-a fixed aspect ratio, so mixing orientations is what gives it rhythm.
+Portrait, landscape and square all work. Each picture is fitted to the
+viewport so the photograph and its words stay on the same slide.
 
 ---
 

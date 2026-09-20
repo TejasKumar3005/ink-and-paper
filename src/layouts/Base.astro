@@ -13,13 +13,15 @@ interface Props {
   publishedTime?: Date;
   /** Wide pages (the story lane) opt out of the narrow measure. */
   wide?: boolean;
+  /** Hide the colophon and lock the viewport — used by the story-lane slides. */
+  bare?: boolean;
 }
 
-const { title, description, type, publishedTime } = Astro.props;
+const { title, description, type, publishedTime, bare = false } = Astro.props;
 ---
 
 <!doctype html>
-<html lang={site.locale}>
+<html lang={site.locale} class:list={[bare && 'is-lane']}>
   <head>
     <BaseHead
       title={title}
@@ -36,7 +38,7 @@ const { title, description, type, publishedTime } = Astro.props;
     <main id="main" tabindex="-1">
       <slot />
     </main>
-    <Colophon />
+    {!bare && <Colophon />}
 
     <script>
       /**

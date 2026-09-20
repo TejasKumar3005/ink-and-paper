@@ -117,6 +117,7 @@
     --dur-reveal: 900ms;
     --dur-stroke: 1100ms;
     --dur-develop: 1500ms;
+    --dur-slide: 780ms;
   }
 
 }
@@ -289,6 +290,28 @@
 
   main {
     flex: 1 0 auto;
+  }
+
+  /* Story lane: with JS the page is a viewport, not a long scroll. */
+  html.is-lane.js,
+  html.is-lane.js body {
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  html.is-lane.js body {
+    min-height: 100dvh;
+  }
+
+  html.is-lane.js main {
+    flex: 1 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  html.is-lane.js .masthead {
+    padding-block: var(--space-s) var(--space-xs);
   }
 
   .prose {
@@ -504,15 +527,89 @@
   }
 
   /* ---- Story lane -------------------------------------------------------- */
+  .lane {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+  }
+
+  .lane__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-2xs) var(--space-l);
+    padding-block: var(--space-s) var(--space-xs);
+  }
+
+  .lane__standfirst {
+    margin-block-start: var(--space-2xs);
+    color: var(--ink-muted);
+    max-width: 38ch;
+  }
+
+  .lane__count {
+    color: var(--ink-faint);
+  }
+
+  .lane__viewport {
+    position: relative;
+    flex: 1;
+    min-height: 18rem;
+  }
+
+  .lane__pager {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding-block: var(--space-s) var(--space-m);
+  }
+
+  .lane__dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .lane__dot {
+    display: block;
+    width: 0.55rem;
+    height: 0.55rem;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: var(--rule-strong);
+    cursor: pointer;
+  }
+
+  .lane__dot[aria-current='true'] {
+    background: var(--accent);
+  }
+
+  .lane__dot:hover,
+  .lane__dot:focus-visible {
+    background: var(--accent-ink);
+  }
+
+  .lane__dot:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .lane__hint {
+    color: var(--ink-faint);
+  }
+
   .story {
     display: grid;
     gap: var(--space-m);
     align-items: center;
-    margin-block-start: var(--space-3xl);
-  }
-
-  .story:first-of-type {
-    margin-block-start: var(--space-xl);
   }
 
   .story__text {
@@ -547,10 +644,12 @@
   .story__figure img {
     width: 100%;
     height: auto;
+    max-height: min(38vh, 22rem);
+    object-fit: contain;
+    object-position: center;
     box-shadow: var(--photo-shadow);
   }
 
-  /* The sequence number sits beside the frame on wide screens, above it on small. */
   .story__index {
     display: block;
     margin-block-end: var(--space-2xs);
@@ -573,7 +672,10 @@
       gap: var(--space-xl);
     }
 
-    /* Alternate the side the text sits on to give the scroll a rhythm. */
+    .story__figure img {
+      max-height: min(62vh, 38rem);
+    }
+
     .story--left .story__figure {
       grid-column: 2;
       grid-row: 1;
@@ -604,6 +706,42 @@
     .story--right {
       grid-template-columns: 1.22fr 0.78fr;
     }
+  }
+
+  /* Without JS the photographs still stack so the page is readable. */
+  html:not(.js) .story + .story {
+    margin-block-start: var(--space-3xl);
+    padding-block-start: var(--space-xl);
+  }
+
+  html:not(.js) .lane__pager {
+    display: none;
+  }
+
+  /* One photograph at a time: the outgoing slide leaves, the next arrives. */
+  .js .lane__viewport {
+    overflow: hidden;
+    touch-action: none;
+  }
+
+  .js .story {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    align-content: center;
+    padding-block: var(--space-xs);
+    transform: translate3d(0, 100%, 0);
+    pointer-events: none;
+  }
+
+  .js .story.is-current {
+    transform: none;
+    pointer-events: auto;
+    z-index: 2;
+  }
+
+  .js .story.is-past {
+    transform: translate3d(0, -100%, 0);
   }
 
   /* ---- Writing stream ---------------------------------------------------- */

@@ -46,6 +46,25 @@
   }
 
   /* ------------------------------------------------------------------------
+     Story lane: one photograph slides out, the next slides in.
+     ---------------------------------------------------------------------- */
+  .js .story {
+    transition: transform var(--dur-slide) var(--ease-ink);
+  }
+
+  .js .lane.is-jumping .story {
+    transition: none;
+  }
+
+  .js .lane__dot {
+    transition: background-color 320ms var(--ease-ink), transform 320ms var(--ease-ink);
+  }
+
+  .js .lane__dot[aria-current='true'] {
+    transform: scale(1.28);
+  }
+
+  /* ------------------------------------------------------------------------
      Headings: a brush stroke that draws itself in.
      The path is hand-drawn-irregular; the filter roughens it further.
      ---------------------------------------------------------------------- */
@@ -225,12 +244,31 @@
       display: none !important;
     }
 
-    .ink-link,
-    .ink-link::before,
+    .js .ink-link,
+    .js .ink-link::before,
     .onward__title,
     .link-list a,
     .skip-link {
       transition: none !important;
+    }
+
+    .js .story {
+      transform: none !important;
+      opacity: 0;
+      transition: opacity 160ms linear !important;
+    }
+
+    .js .story.is-current {
+      opacity: 1;
+    }
+
+    .js .story.is-past {
+      opacity: 0;
+    }
+
+    .js .lane__dot {
+      transition: none !important;
+      transform: none !important;
     }
   }
 }

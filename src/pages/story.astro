@@ -7,6 +7,7 @@ import { site } from '../site.config';
 import { formatDate, getStory, isoDate } from '../lib/content';
 
 const entries = await getStory();
+const total = entries.length;
 
 /** Render each entry's Markdown body up front so the template stays declarative. */
 const lane = await Promise.all(
@@ -19,75 +20,261 @@ const lane = await Promise.all(
 
 <Base
   title="Story lane"
-  description={`Photographs by ${site.name}, in sequence, each with the reason it was taken beside it.`}
+  description={`Photographs by ${site.name}, one at a time, each with the reason it was taken beside it.`}
+  bare
 >
-  <div class="shell page-top page-bottom">
+  <section class="shell lane" data-lane aria-label="Story lane" aria-roledescription="carousel">
     <header class="lane__head">
-      <InkHeading as="h1" class="lane__title">Story lane</InkHeading>
-      <p class="lane__standfirst">
-        Pictures I have not grown out of, in the order they happened.
-        Read it downwards.
+      <div>
+        <InkHeading as="h1" class="lane__title">Story lane</InkHeading>
+        <p class="lane__standfirst">
+          Pictures I have not grown out of, in the order they happened.
+          One at a time.
+        </p>
+      </div>
+      <p class="lane__count meta" data-lane-count aria-live="polite" aria-atomic="true">
+        <span data-lane-current>01</span> / {String(total).padStart(2, '0')}
       </p>
     </header>
 
-    {
-      lane.map(({ entry, Content, index }) => (
-        <article
-          class:list={['story', index % 2 === 0 ? 'story--right' : 'story--left']}
-          aria-labelledby={`story-${entry.id}`}
-        >
-          <figure class="story__figure" data-develop>
-            <span class="meta story__index" aria-hidden="true">
-              {String(index + 1).padStart(2, '0')}
-            </span>
-            <Image
-              src={entry.data.image}
-              alt={entry.data.alt}
-              widths={[420, 680, 900, 1200, 1600]}
-              sizes="(min-width: 56rem) 56vw, calc(100vw - 2 * clamp(1.25rem, 5vw, 3.5rem))"
-              loading={index === 0 ? 'eager' : 'lazy'}
-              fetchpriority={index === 0 ? 'high' : 'auto'}
-              quality={72}
-            />
-          </figure>
+    <div class="lane__viewport">
+      {
+        lane.map(({ entry, Content, index }) => (
+          <article
+            class:list={[
+              'story',
+              index % 2 === 0 ? 'story--right' : 'story--left',
+              index === 0 && 'is-current',
+            ]}
+            id={entry.id}
+            aria-labelledby={`story-${entry.id}`}
+            aria-hidden={index === 0 ? undefined : 'true'}
+            data-lane-slide
+          >
+            <figure class:list={['story__figure', index === 0 && 'is-developed']} data-develop>
+              <span class="meta story__index" aria-hidden="true">
+                {String(index + 1).padStart(2, '0')}
+              </span>
+              <Image
+                src={entry.data.image}
+                alt={entry.data.alt}
+                widths={[420, 680, 900, 1200, 1600]}
+                sizes="(min-width: 56rem) 46vw, calc(100vw - 2 * clamp(1.25rem, 5vw, 3.5rem))"
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchpriority={index === 0 ? 'high' : 'auto'}
+                quality={72}
+              />
+            </figure>
 
-          <div class="story__text" data-reveal style="--reveal-delay:120ms">
-            <p class="meta">
-              <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
-            </p>
-            <h2 class="story__title" id={`story-${entry.id}`}>
-              {entry.data.title}
-            </h2>
-            <div class="story__body">
-              <Content />
-            </div>
-            {entry.data.meta && (
-              <p class="meta story__meta">
-                <span>{entry.data.meta}</span>
+            <div class:list={['story__text', index === 0 && 'is-revealed']} data-reveal>
+              <p class="meta">
+                <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
               </p>
-            )}
-          </div>
-        </article>
-      ))
-    }
-  </div>
+              <h2 class="story__title" id={`story-${entry.id}`}>
+                {entry.data.title}
+              </h2>
+              <div class="story__body">
+                <Content />
+              </div>
+              {entry.data.meta && (
+                <p class="meta story__meta">
+                  <span>{entry.data.meta}</span>
+                </p>
+              )}
+            </div>
+          </article>
+        ))
+      }
+    </div>
+
+    <nav class="lane__pager" aria-label="Photographs in the lane">
+      <ol class="lane__dots">
+        {
+          lane.map(({ entry, index }) => (
+            <li>
+              <button
+                type="button"
+                class="lane__dot"
+                data-lane-dot
+                aria-label={`${entry.data.title}, photograph ${index + 1} of ${total}`}
+                aria-current={index === 0 ? 'true' : undefined}
+              />
+            </li>
+          ))
+        }
+      </ol>
+      <p class="lane__hint meta meta--plain">Scroll</p>
+    </nav>
+  </section>
 </Base>
 
 <style>
-  /* The lane earns a wider stage than the reading pages. */
   .shell {
     --content-width: 78rem;
-  }
-
-  .lane__head {
-    max-width: var(--measure);
-    padding-block: var(--space-l) 0;
-  }
-
-  .lane__standfirst {
-    margin-block-start: var(--space-m);
-    font-size: var(--step-1);
-    color: var(--ink-muted);
-    max-width: 38ch;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
   }
 </style>
+
+<script>
+  /**
+   * One photograph on screen. A wheel, swipe, or key advances exactly one
+   * slide: the current picture leaves, the next one arrives.
+   */
+  const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+  function durationMs() {
+    if (REDUCED.matches) return 180;
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--dur-slide');
+    const ms = Number.parseFloat(raw);
+    return Number.isFinite(ms) ? ms : 780;
+  }
+
+  function initLane() {
+    const root = document.querySelector<HTMLElement>('[data-lane]');
+    if (!root) return;
+
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-lane-slide]'));
+    const dots = Array.from(root.querySelectorAll<HTMLButtonElement>('[data-lane-dot]'));
+    const currentEl = root.querySelector<HTMLElement>('[data-lane-current]');
+    if (!slides.length) return;
+
+    let index = Math.max(
+      0,
+      slides.findIndex((slide) => slide.classList.contains('is-current')),
+    );
+    let locked = false;
+    let touchY: number | null = null;
+
+    const paint = (next: number) => {
+      slides.forEach((slide, i) => {
+        const active = i === next;
+        slide.classList.toggle('is-current', active);
+        slide.classList.toggle('is-past', i < next);
+        slide.toggleAttribute('aria-hidden', !active);
+        slide.inert = !active;
+        if (active) {
+          slide.querySelector('[data-develop]')?.classList.add('is-developed');
+          slide.querySelector('[data-reveal]')?.classList.add('is-revealed');
+        }
+      });
+      dots.forEach((dot, i) => {
+        if (i === next) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      });
+      if (currentEl) currentEl.textContent = String(next + 1).padStart(2, '0');
+    };
+
+    const go = (next: number, animate = true) => {
+      const clamped = Math.max(0, Math.min(slides.length - 1, next));
+      if (clamped === index || locked) return;
+      locked = true;
+      if (!animate) root.classList.add('is-jumping');
+      paint(clamped);
+      index = clamped;
+      history.replaceState(null, '', `#${slides[clamped].id}`);
+      window.setTimeout(
+        () => {
+          root.classList.remove('is-jumping');
+          locked = false;
+        },
+        animate ? durationMs() + 40 : 40,
+      );
+    };
+
+    const hashId = decodeURIComponent(location.hash.replace(/^#/, ''));
+    const fromHash = slides.findIndex((slide) => slide.id === hashId);
+    if (fromHash > 0) go(fromHash, false);
+    else paint(index);
+
+    const ac = new AbortController();
+    const { signal } = ac;
+
+    const onWheel = (event: WheelEvent) => {
+      if (Math.abs(event.deltaY) < Math.abs(event.deltaX)) return;
+      if (Math.abs(event.deltaY) < 12) return;
+      event.preventDefault();
+      go(index + (event.deltaY > 0 ? 1 : -1));
+    };
+
+    window.addEventListener('wheel', onWheel, { passive: false, signal });
+
+    root.addEventListener(
+      'touchstart',
+      (event) => {
+        touchY = event.changedTouches[0]?.clientY ?? null;
+      },
+      { passive: true, signal },
+    );
+
+    root.addEventListener(
+      'touchend',
+      (event) => {
+        if (touchY == null) return;
+        const endY = event.changedTouches[0]?.clientY ?? touchY;
+        const dy = touchY - endY;
+        touchY = null;
+        if (Math.abs(dy) < 48) return;
+        go(index + (dy > 0 ? 1 : -1));
+      },
+      { passive: true, signal },
+    );
+
+    window.addEventListener(
+      'keydown',
+      (event) => {
+        if (event.defaultPrevented || event.altKey || event.metaKey || event.ctrlKey) return;
+        const target = event.target;
+        if (
+          target instanceof HTMLElement &&
+          target.closest('input, textarea, select, [contenteditable="true"]')
+        ) {
+          return;
+        }
+        if (
+          event.key === ' ' &&
+          target instanceof HTMLElement &&
+          target.closest('button, a')
+        ) {
+          return;
+        }
+        switch (event.key) {
+          case 'ArrowDown':
+          case 'ArrowRight':
+          case 'PageDown':
+          case ' ':
+            event.preventDefault();
+            go(index + 1);
+            break;
+          case 'ArrowUp':
+          case 'ArrowLeft':
+          case 'PageUp':
+            event.preventDefault();
+            go(index - 1);
+            break;
+          case 'Home':
+            event.preventDefault();
+            go(0);
+            break;
+          case 'End':
+            event.preventDefault();
+            go(slides.length - 1);
+            break;
+          default:
+            break;
+        }
+      },
+      { signal },
+    );
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => go(i), { signal });
+    });
+
+    document.addEventListener('astro:before-swap', () => ac.abort(), { once: true });
+  }
+
+  document.addEventListener('astro:page-load', initLane);
+</script>
