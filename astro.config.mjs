@@ -8,9 +8,9 @@ import { site } from './src/site.config.ts';
  * Everything is derived from the single `url` in src/site.config.ts, so
  * deploying somewhere else means editing one line.
  *
- * A GitHub Pages *project* site lives under a path — https://you.github.io/repo
- * — and Astro needs that path as `base`. Setting `site.url` to the full
- * deployed URL is enough; the origin and the base are split out here.
+ * On the custom domain the site is at the root (`base` is `/`). A GitHub
+ * Pages project URL without a domain still works: put the repo path in `url`
+ * and `base` follows it.
  */
 const deployed = new URL(site.url);
 

@@ -17,7 +17,7 @@ export const site = {
   name: 'Tejas Kumar',
 
   // Canonical URL. No trailing slash. Astro's `base` is derived from this.
-  url: 'https://tejaskumar3005.github.io/ink-and-paper',
+  url: 'https://tejas.website',
 
   tagline: 'To be alive is to grow',
 

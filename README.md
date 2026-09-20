@@ -1,6 +1,6 @@
 # Ink & Paper
 
-**Live at [tejaskumar3005.github.io/ink-and-paper](https://tejaskumar3005.github.io/ink-and-paper/)**,
+**Live at [tejas.website](https://tejas.website/)**,
 deployed from `main` by [the workflow](.github/workflows/deploy.yml) on every push.
 
 A personal website: an introduction, a photographic story lane, a stream of
@@ -270,8 +270,25 @@ you move it or start again somewhere else.
 4. **Watch the Actions tab.** The first run takes a couple of minutes; after
    that the deployed URL appears under Settings → Pages.
 
-For a custom domain, add it under Settings → Pages, create a `public/CNAME`
-file containing the bare domain, and set `url` to `https://yourdomain.com`.
+This site uses the custom domain **tejas.website**. The hostname lives in
+`public/CNAME` and `src/site.config.ts`. GitHub Pages is told the same name
+under Settings → Pages.
+
+The domain’s nameservers are Cloudflare. In the Cloudflare DNS tab, point the
+apex (and `www` if you want it) at GitHub, **DNS only** (grey cloud — not
+proxied), then wait for the certificate:
+
+| Type  | Name | Target                     |
+| ----- | ---- | -------------------------- |
+| CNAME | `@`  | `tejaskumar3005.github.io` |
+| CNAME | `www`| `tejaskumar3005.github.io` |
+
+Cloudflare flattens the apex CNAME automatically. Leave the proxy off so
+GitHub can issue HTTPS. After the first successful check, Settings → Pages
+will show a green tick and `https://tejas.website` will serve this site.
+
+To use a different domain later: change `url`, rewrite `public/CNAME`, and
+update the Pages custom-domain field.
 
 ### Other hosts
 
