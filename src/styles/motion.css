@@ -145,10 +145,10 @@
   }
 
   /* ------------------------------------------------------------------------
-     Page transitions: CodyHouse's ink-drop sprite, played with steps().
-     License: https://codyhouse.co/mit
-     25 frames, 16:9. The film is sized to cover the viewport without
-     stretching a frame, then translated one frame at a time.
+     Page transitions: splash to cover, then fade the next page in.
+     The film is CodyHouse's 25-frame PNG (MIT), 16:9, played with steps().
+     We never reverse the sprite — the last frame holds, the cover fades,
+     and the incoming page fades up on top.
      ---------------------------------------------------------------------- */
   .ink-splash {
     position: fixed;
@@ -157,10 +157,11 @@
     pointer-events: none;
     visibility: hidden;
     overflow: hidden;
+    opacity: 1;
   }
 
   .ink-splash[data-state='in'],
-  .ink-splash[data-state='out'] {
+  .ink-splash[data-state='fade'] {
     visibility: visible;
   }
 
@@ -191,11 +192,17 @@
   }
 
   .ink-splash[data-state='in'] .ink-splash__film {
-    animation: splash-in 800ms steps(24) forwards;
+    animation: splash-in var(--dur-splash-in) steps(24) forwards;
   }
 
-  .ink-splash[data-state='out'] .ink-splash__film {
-    animation: splash-out 800ms steps(24) forwards;
+  /* Hold the last frame while the cover dissolves. Do not play the sprite back. */
+  .ink-splash[data-state='fade'] .ink-splash__film {
+    animation: none;
+    transform: translate(-98%, -50%);
+  }
+
+  .ink-splash[data-state='fade'] {
+    animation: splash-reveal var(--dur-splash-fade) var(--ease-wash) forwards;
   }
 
   @keyframes splash-in {
@@ -208,16 +215,30 @@
     }
   }
 
-  @keyframes splash-out {
+  @keyframes splash-reveal {
     from {
-      transform: translate(-98%, -50%);
+      opacity: 1;
     }
     to {
-      transform: translate(-2%, -50%);
+      opacity: 0;
     }
   }
 
-  /* The sprite is the transition; the router's default crossfade would fight it. */
+  /* Incoming page sits under the cover at 0, then fades in as the ink lifts. */
+  html.is-page-pending:not(.is-page-arrive) .masthead,
+  html.is-page-pending:not(.is-page-arrive) main,
+  html.is-page-pending:not(.is-page-arrive) .colophon {
+    opacity: 0;
+  }
+
+  html.is-page-arrive .masthead,
+  html.is-page-arrive main,
+  html.is-page-arrive .colophon {
+    opacity: 1;
+    transition: opacity var(--dur-splash-fade) var(--ease-ink);
+  }
+
+  /* The sprite is the cover; the router's default crossfade would fight it. */
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
@@ -255,6 +276,13 @@
 
     .ink-splash {
       display: none !important;
+    }
+
+    html.is-page-pending .masthead,
+    html.is-page-pending main,
+    html.is-page-pending .colophon {
+      opacity: 1 !important;
+      transition: none !important;
     }
 
     .js .ink-link,

@@ -118,6 +118,8 @@
     --dur-stroke: 1100ms;
     --dur-develop: 1500ms;
     --dur-slide: 1100ms;
+    --dur-splash-in: 800ms;
+    --dur-splash-fade: 700ms;
   }
 
 }

@@ -1,11 +1,11 @@
 ---
 /**
- * Page transition: a real ink-drop sprite, not a filtered circle.
+ * Page transition: splash to cover, then fade the next page in.
  *
  * The film is CodyHouse's 25-frame PNG sequence (MIT), recolored to the
- * site ink. CSS `steps(24)` plays it like a flipbook — that is the
- * technique behind every well-known ink transition on the web
- * (Sevenhills, CodyHouse, Codrops). No SVG filter, no per-frame JS.
+ * site ink. CSS `steps(24)` plays the drop like a flipbook. The last
+ * frame holds; we never play the sprite backwards. The cover fades and
+ * the incoming page fades up underneath.
  *
  * `transition:persist` keeps the overlay alive across the swap so the
  * cover never lifts early.
@@ -39,7 +39,7 @@ const sprite = url('/ink-splash.png');
   ) {
     document.documentElement.setAttribute(ROOT_ATTR, '');
 
-    /** Matches the CSS duration. The last frame is a solid cover. */
+    /** Matches `--dur-splash-in`. The last frame is a solid cover. */
     const WASH_IN = 800;
     const splash = () => document.querySelector<HTMLElement>('.ink-splash');
 
@@ -74,7 +74,7 @@ const sprite = url('/ink-splash.png');
       node.style.setProperty('--splash-scale', reach.toFixed(3));
     }
 
-    function run(node: HTMLElement, state: 'in' | 'out') {
+    function run(node: HTMLElement, state: 'in' | 'fade') {
       if (node.dataset.state === state) {
         node.setAttribute('data-state', 'idle');
         void node.offsetWidth;
@@ -99,16 +99,27 @@ const sprite = url('/ink-splash.png');
       };
     });
 
+    document.addEventListener('astro:before-swap', (event) => {
+      const next = (event as Event & { newDocument?: Document }).newDocument;
+      // First paint of the incoming page is invisible; it fades in after the swap.
+      next?.documentElement.classList.add('is-page-pending');
+    });
+
     document.addEventListener('astro:after-swap', () => {
       const node = splash();
-      if (!node || node.getAttribute('data-state') !== 'in') return;
-      run(node, 'out');
+      if (node?.getAttribute('data-state') === 'in') run(node, 'fade');
+      requestAnimationFrame(() => {
+        document.documentElement.classList.add('is-page-arrive');
+      });
     });
 
     document.addEventListener('animationend', (event) => {
-      const film = event.target as HTMLElement;
-      const node = film?.closest?.('.ink-splash') as HTMLElement | null;
-      if (node?.dataset.state === 'out') node.setAttribute('data-state', 'idle');
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (!target.classList.contains('ink-splash')) return;
+      if (target.dataset.state !== 'fade') return;
+      target.setAttribute('data-state', 'idle');
+      document.documentElement.classList.remove('is-page-pending', 'is-page-arrive');
     });
   }
 </script>
