@@ -723,8 +723,9 @@
     margin-block-start: var(--space-s);
   }
 
-  /* Drop cap on the opening paragraph only. */
-  .prose--dropcap > p:first-of-type::first-letter {
+  /* Drop cap on the first real paragraph, not a leading image. */
+  .prose--dropcap > p:first-of-type:not(:has(img))::first-letter,
+  .prose--dropcap > h2:first-of-type + p::first-letter {
     float: left;
     font-size: 4.2em;
     line-height: 0.74;
@@ -793,6 +794,28 @@
     width: 100%;
     height: auto;
     box-shadow: var(--photo-shadow);
+  }
+
+  .prose figure {
+    margin-block: var(--space-l);
+  }
+
+  .prose .article-media video {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: var(--paper-sunk);
+  }
+
+  .prose img + em,
+  .prose p:has(img) + p:has(> em:only-child) {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: var(--step--1);
+    font-style: normal;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    margin-block: calc(var(--space-xs) * -1) var(--space-m);
   }
 
   .prose code {

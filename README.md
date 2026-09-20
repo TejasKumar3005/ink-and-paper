@@ -41,17 +41,15 @@ Two things live outside it, both in `public/`:
 - `public/og.jpg` — the 1200×630 image used when a link to the site is shared.
 - `public/favicon.svg` and `public/apple-touch-icon.png` — the site mark.
 
-### Finding everything that still needs your attention
+The site is Tejas Kumar's. Name, tagline, email, GitHub, X, and LinkedIn
+live in `src/site.config.ts`. The writing stream is two essays first
+published on X — *Everything We Call "Alive" Is Wrong* and *The Agentic
+Economy is about to 100x everything* — with their original diagrams,
+and Conway's Game of Life as a looping clip. The social card
+(`public/og.jpg`) is the name and tagline on paper.
 
-Every piece of placeholder content is marked. Search the project for `TODO:`:
-
-```bash
-grep -rn "TODO:" src public scripts
-```
-
-That turns up the config placeholders, the sample writing, and the words
-written for the story-lane photographs — the photographs are yours, but the
-captions and two of the four dates are guesses. Replace them.
+The story-lane photographs are real; some captions and dates are still
+guesses, marked `TODO:` in `src/content/story/`.
 
 ---
 
@@ -162,6 +160,7 @@ src/
     story/              ← one Markdown file per photograph
     writing/            ← articles and thoughts together
   assets/stories/       ← the photographs themselves
+  assets/writing/       ← diagrams and covers for the essays
   components/           ← masthead, colophon, and the ink pieces
   layouts/Base.astro    ← the page shell and the reveal observer
   lib/url.ts            ← wrap internal links in url() — see below
