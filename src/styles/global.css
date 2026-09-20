@@ -387,16 +387,7 @@
     text-decoration: none;
   }
 
-  .masthead__tagline {
-    display: block;
-    margin-block-start: 0.35em;
-  }
-
   @media (max-width: 40rem) {
-    html.is-lane .masthead__tagline {
-      display: none;
-    }
-
     html.is-lane .masthead {
       padding-block: var(--space-xs);
     }
