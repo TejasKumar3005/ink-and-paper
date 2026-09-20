@@ -161,19 +161,29 @@
     visibility: visible;
   }
 
+  .ink-splash__drop {
+    position: absolute;
+    left: var(--splash-x, 50%);
+    top: var(--splash-y, 50%);
+    width: 0;
+    height: 0;
+    transform: rotate(var(--splash-rot, 0deg)) scale(var(--splash-scale, 1.12))
+      scaleX(var(--splash-flip-x, 1)) scaleY(var(--splash-flip-y, 1));
+  }
+
   .ink-splash__film {
     /* Cover: at least as wide as the viewport, at least as tall. */
     --frame-w: max(100vw, calc(100vh * 16 / 9));
     --frame-h: calc(var(--frame-w) * 9 / 16);
     position: absolute;
-    left: 50%;
-    top: 50%;
+    left: 0;
+    top: 0;
     width: calc(var(--frame-w) * 25);
     height: var(--frame-h);
     background-image: var(--splash-src);
     background-repeat: no-repeat;
     background-size: 100% 100%;
-    /* -2% centres frame 1 of 25 (50 / 25). */
+    /* -2% centres frame 1 of 25 (50 / 25) on the drop point. */
     transform: translate(-2%, -50%);
   }
 

@@ -211,8 +211,10 @@ develop from desaturated and soft to clear.
 
 The page transition is [CodyHouse's ink-drop sprite](https://codyhouse.co/gem/ink-transition-effect/)
 — the same PNG-sequence-plus-`steps()` technique used on Sevenhills — not a
-live SVG filter. The heading strokes and dividers still use the
-`feTurbulence` / `feDisplacementMap` filters in `src/components/InkDefs.astro`.
+live SVG filter. Each click lands the drop somewhere new: a random point,
+flip, and a little turn, scaled so the last frame still covers the page.
+The heading strokes and dividers still use the `feTurbulence` /
+`feDisplacementMap` filters in `src/components/InkDefs.astro`.
 
 All of it is disabled under `prefers-reduced-motion: reduce`, which falls back
 to instant, static states. If you turn that setting on in your OS, the site

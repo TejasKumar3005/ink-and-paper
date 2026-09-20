@@ -24,7 +24,9 @@ const sprite = url('/ink-splash.png');
   transition:persist="ink-splash"
   style={`--splash-src: url('${sprite}')`}
 >
-  <div class="ink-splash__film"></div>
+  <div class="ink-splash__drop">
+    <div class="ink-splash__film"></div>
+  </div>
 </div>
 
 <script>
@@ -41,6 +43,34 @@ const sprite = url('/ink-splash.png');
     const WASH_IN = 800;
     const splash = () => document.querySelector<HTMLElement>('.ink-splash');
 
+    let lastX = 50;
+    let lastY = 50;
+
+    /** A new landing: place, flip, and turn — then scale so the last frame still covers. */
+    function scatter(node: HTMLElement) {
+      let x = 18 + Math.random() * 64;
+      let y = 18 + Math.random() * 64;
+      // Don't land too near the last drop; it reads as the same splash.
+      if (Math.hypot(x - lastX, y - lastY) < 22) {
+        x = Math.min(82, Math.max(18, 100 - x));
+        y = Math.min(82, Math.max(18, y > 50 ? y - 28 : y + 28));
+      }
+      lastX = x;
+      lastY = y;
+
+      const flipX = Math.random() < 0.5 ? -1 : 1;
+      const flipY = Math.random() < 0.5 ? -1 : 1;
+      const rot = Math.round(Math.random() * 48 - 24);
+      const reach = 1.12 + 2.3 * Math.max(Math.abs(x / 100 - 0.5), Math.abs(y / 100 - 0.5));
+
+      node.style.setProperty('--splash-x', `${x.toFixed(1)}%`);
+      node.style.setProperty('--splash-y', `${y.toFixed(1)}%`);
+      node.style.setProperty('--splash-rot', `${rot}deg`);
+      node.style.setProperty('--splash-flip-x', String(flipX));
+      node.style.setProperty('--splash-flip-y', String(flipY));
+      node.style.setProperty('--splash-scale', reach.toFixed(3));
+    }
+
     function run(node: HTMLElement, state: 'in' | 'out') {
       if (node.dataset.state === state) {
         node.setAttribute('data-state', 'idle');
@@ -56,6 +86,7 @@ const sprite = url('/ink-splash.png');
       const load = prepare.loader;
 
       prepare.loader = async () => {
+        scatter(node);
         run(node, 'in');
         // Hold the swap until the drop has covered the page.
         await Promise.all([
