@@ -122,6 +122,32 @@
     --dur-splash-fade: 700ms;
   }
 
+  /* Computer: a tighter editorial measure. Phone keeps the roomier scale. */
+  @media (min-width: 56rem) {
+    :root {
+      --step--1: 0.7rem;
+      --step-0: 1rem;
+      --step-1: 1.15rem;
+      --step-2: 1.38rem;
+      --step-3: 1.85rem;
+      --step-4: 2.4rem;
+
+      --leading: 1.58;
+      --measure: 60ch;
+
+      --space-xs: 0.6rem;
+      --space-s: 0.85rem;
+      --space-m: 1.15rem;
+      --space-l: 1.65rem;
+      --space-xl: 2.25rem;
+      --space-2xl: 3.25rem;
+      --space-3xl: 4.75rem;
+
+      --gutter: 2rem;
+      --content-width: 64rem;
+    }
+  }
+
 }
 
 /* --------------------------------------------------------------------------
@@ -335,6 +361,12 @@
   /* ---- Masthead ---------------------------------------------------------- */
   .masthead {
     padding-block: var(--space-l) var(--space-m);
+  }
+
+  @media (min-width: 56rem) {
+    .masthead {
+      padding-block: var(--space-s) var(--space-xs);
+    }
   }
 
   html.is-lane .masthead {
@@ -723,7 +755,16 @@
     }
 
     .story__figure img {
-      max-height: min(74vh, 46rem);
+      max-height: min(64vh, 34rem);
+    }
+
+    .story__title {
+      font-size: var(--step-1);
+      margin-block: var(--space-3xs) var(--space-xs);
+    }
+
+    .story__body {
+      font-size: var(--step-0);
     }
 
     .story__figure {
@@ -916,7 +957,7 @@
   .prose--dropcap > p:first-of-type:not(:has(img))::first-letter,
   .prose--dropcap > h2:first-of-type + p::first-letter {
     float: left;
-    font-size: 4.2em;
+    font-size: 3.6em;
     line-height: 0.74;
     padding-inline-end: 0.09em;
     padding-block-start: 0.04em;

@@ -93,7 +93,18 @@ const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
   }
 
   .intro {
-    padding-block: var(--space-xl) var(--space-2xl);
+    padding-block: var(--space-l) var(--space-xl);
+  }
+
+  @media (min-width: 56rem) {
+    .intro {
+      padding-block: var(--space-m) var(--space-l);
+    }
+
+    .intro__body,
+    .now {
+      margin-block-start: var(--space-l);
+    }
   }
 
   .onward__all {
