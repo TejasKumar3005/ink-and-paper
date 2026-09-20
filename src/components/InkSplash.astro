@@ -108,9 +108,11 @@ const sprite = url('/ink-splash.png');
     document.addEventListener('astro:after-swap', () => {
       const node = splash();
       if (node?.getAttribute('data-state') === 'in') run(node, 'fade');
-      requestAnimationFrame(() => {
-        document.documentElement.classList.add('is-page-arrive');
-      });
+      if (document.documentElement.classList.contains('is-page-pending')) {
+        requestAnimationFrame(() => {
+          document.documentElement.classList.add('is-page-arrive');
+        });
+      }
     });
 
     document.addEventListener('animationend', (event) => {
