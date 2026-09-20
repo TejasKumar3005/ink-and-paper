@@ -117,9 +117,13 @@ const lane = await Promise.all(
 
   function durationMs() {
     if (REDUCED.matches) return 160;
-    const raw = getComputedStyle(document.documentElement).getPropertyValue('--dur-slide');
-    const ms = Number.parseFloat(raw);
-    return Number.isFinite(ms) ? ms : 640;
+    const raw = getComputedStyle(document.documentElement).getPropertyValue('--dur-slide').trim();
+    const value = Number.parseFloat(raw);
+    if (!Number.isFinite(value)) return 640;
+    // Production CSS minifies `640ms` to `.64s`. parseFloat alone would be 0.64ms.
+    if (/ms$/i.test(raw)) return value;
+    if (/s$/i.test(raw)) return value * 1000;
+    return value;
   }
 
   function initLane() {
