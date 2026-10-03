@@ -156,25 +156,107 @@
   }
 
   /* ------------------------------------------------------------------------
-     Page transitions: a drop of ink, drawn on a canvas (see InkSplash).
-     The canvas is the cover; CSS only places it and keeps it out of the way.
+     Page transitions: splash to cover, then fade the next page in.
+     The film is CodyHouse's 25-frame PNG (MIT), 16:9, played with steps().
+     We never reverse the sprite — the last frame holds, the cover fades,
+     and the incoming page fades up on top.
+
+     The film is one frame wide and the sprite steps behind it. Sliding a
+     strip 25 screens wide instead made a layer far past the GPU's texture
+     limit, which the browser re-tiled mid-animation — that was the stutter.
      ---------------------------------------------------------------------- */
   .ink-splash {
     position: fixed;
     inset: 0;
     z-index: 90;
-    width: 100%;
-    height: 100%;
     pointer-events: none;
     visibility: hidden;
+    overflow: hidden;
+    opacity: 1;
+    will-change: opacity;
   }
 
   .ink-splash[data-state='in'],
-  .ink-splash[data-state='out'] {
+  .ink-splash[data-state='fade'] {
     visibility: visible;
   }
 
-  /* The ink is the cover; the router's default crossfade would fight it. */
+  .ink-splash__drop {
+    position: absolute;
+    left: var(--splash-x, 50%);
+    top: var(--splash-y, 50%);
+    width: 0;
+    height: 0;
+    transform: rotate(var(--splash-rot, 0deg)) scale(var(--splash-scale, 1.25))
+      scaleX(var(--splash-flip-x, 1)) scaleY(var(--splash-flip-y, 1));
+  }
+
+  .ink-splash__film {
+    /* Cover: at least as wide as the viewport, at least as tall. */
+    --frame-w: max(100vw, calc(100vh * 16 / 9));
+    --frame-h: calc(var(--frame-w) * 9 / 16);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: var(--frame-w);
+    height: var(--frame-h);
+    background-image: var(--splash-src);
+    background-repeat: no-repeat;
+    /* 25 frames across: each frame fills the film exactly. */
+    background-size: 2500% 100%;
+    background-position: 0% 0;
+    /* Centre the frame on the drop point. */
+    transform: translate(-50%, -50%);
+  }
+
+  .ink-splash[data-state='in'] .ink-splash__film {
+    animation: splash-in var(--dur-splash-in) steps(24) forwards;
+  }
+
+  /* Hold the last frame while the cover dissolves. Do not play the sprite back. */
+  .ink-splash[data-state='fade'] .ink-splash__film {
+    animation: none;
+    background-position: 100% 0;
+  }
+
+  .ink-splash[data-state='fade'] {
+    animation: splash-reveal var(--dur-splash-fade) var(--ease-wash) forwards;
+  }
+
+  @keyframes splash-in {
+    from {
+      background-position: 0% 0;
+    }
+    to {
+      /* 100% is frame 25; steps(24) lands on each frame in between. */
+      background-position: 100% 0;
+    }
+  }
+
+  @keyframes splash-reveal {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  /* Incoming page sits under the cover at 0, then fades in as the ink lifts. */
+  html.is-page-pending:not(.is-page-arrive) .masthead,
+  html.is-page-pending:not(.is-page-arrive) main,
+  html.is-page-pending:not(.is-page-arrive) .colophon {
+    opacity: 0;
+  }
+
+  html.is-page-arrive .masthead,
+  html.is-page-arrive main,
+  html.is-page-arrive .colophon {
+    opacity: 1;
+    transition: opacity var(--dur-splash-fade) var(--ease-ink);
+  }
+
+  /* The sprite is the cover; the router's default crossfade would fight it. */
   ::view-transition-old(root),
   ::view-transition-new(root) {
     animation: none;
@@ -212,6 +294,13 @@
 
     .ink-splash {
       display: none !important;
+    }
+
+    html.is-page-pending .masthead,
+    html.is-page-pending main,
+    html.is-page-pending .colophon {
+      opacity: 1 !important;
+      transition: none !important;
     }
 
     .js .ink-link,

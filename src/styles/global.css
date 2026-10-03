@@ -118,6 +118,8 @@
     --dur-stroke: 1100ms;
     --dur-develop: 1500ms;
     --dur-slide: 640ms;
+    --dur-splash-in: 800ms;
+    --dur-splash-fade: 700ms;
   }
 
   /* Computer: a tighter editorial measure. Phone keeps the roomier scale. */
@@ -628,6 +630,10 @@
     overflow: hidden;
   }
 
+  .print--portrait {
+    padding-block-end: 0.7rem;
+  }
+
   .print--portrait img {
     object-position: 50% 62%;
     /* `scale`, not `transform`: the develop-in animation owns transform. */
@@ -641,44 +647,6 @@
     text-align: center;
     font-style: italic;
     color: var(--ink-muted);
-  }
-
-  /* ---- Themes ------------------------------------------------------------ */
-  .themes {
-    padding-block: var(--space-m) 0;
-  }
-
-  .themes__label {
-    font-size: var(--step--1);
-    font-weight: 400;
-    letter-spacing: 0.09em;
-    margin-block-end: var(--space-m);
-  }
-
-  .themes__list {
-    display: grid;
-    gap: var(--space-l);
-    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
-    margin: 0;
-  }
-
-  .themes__list li {
-    padding-block-start: var(--space-s);
-    border-block-start: 1px solid var(--rule);
-  }
-
-  .themes__num {
-    color: var(--accent);
-  }
-
-  .themes__title {
-    font-size: var(--step-1);
-    margin-block: var(--space-3xs) var(--space-2xs);
-  }
-
-  .themes__text {
-    color: var(--ink-muted);
-    max-width: 30ch;
   }
 
   /* ---- Story lane -------------------------------------------------------- */

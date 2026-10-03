@@ -214,13 +214,10 @@ splashes across the viewport between pages, a brush stroke that draws itself
 under headings, text that fades up out of a soft blur, photographs that
 develop from desaturated and soft to clear.
 
-The page transition is drawn on a `<canvas>` in
-`src/components/InkSplash.astro`. The drop lands where you clicked or tapped:
-flecks are thrown first, then the drop blooms across the page with an indigo
-bleed at its rim, and the next page is revealed as the ink lifts off from the
-same spot. The shapes are generated fresh each time, so no two splashes match,
-and because they are drawn rather than scaled up from an image, the edge stays
-sharp on a phone and a large monitor alike.
+The page transition is [CodyHouse's ink-drop sprite](https://codyhouse.co/gem/ink-transition-effect/)
+— the same PNG-sequence-plus-`steps()` technique used on Sevenhills — not a
+live SVG filter. Each click lands the drop somewhere new: a random point,
+flip, and a little turn, scaled so the last frame still covers the page.
 The heading strokes and dividers still use the `feTurbulence` /
 `feDisplacementMap` filters in `src/components/InkDefs.astro`.
 

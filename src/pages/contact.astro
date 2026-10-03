@@ -10,13 +10,6 @@ import { site } from '../site.config';
 
     <p class="contact__note">{site.contactNote}</p>
 
-    <div class="contact__topics" data-reveal>
-      <p class="meta">Good reasons to write</p>
-      <ul class="contact__topic-list" role="list">
-        {site.contactTopics.map((topic) => <li>{topic}</li>)}
-      </ul>
-    </div>
-
     <a
       class="ink-link contact__email"
       href={`mailto:${site.email}`}
@@ -46,33 +39,4 @@ import { site } from '../site.config';
     padding-block-start: var(--space-l);
   }
 
-  .contact__topics {
-    margin-block-start: var(--space-xl);
-  }
-
-  .contact__topics ul {
-    margin: var(--space-xs) 0 0;
-    color: var(--ink-muted);
-  }
-
-  .contact__topics li {
-    position: relative;
-    padding-inline-start: 1.2em;
-  }
-
-  .contact__topics li + li {
-    margin-block-start: var(--space-3xs);
-  }
-
-  .contact__topics li::before {
-    content: '';
-    position: absolute;
-    inset-inline-start: 0;
-    top: 0.68em;
-    width: 0.36em;
-    height: 0.36em;
-    border-radius: 50%;
-    background: var(--accent);
-    opacity: 0.7;
-  }
 </style>

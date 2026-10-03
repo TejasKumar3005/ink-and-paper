@@ -19,18 +19,13 @@ const [headshot] = Object.values(
     eager: true,
   }),
 ).map((module) => module.default);
-
-/** The intro lede marks one word with {braces}; that word gets the accent. */
-const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
 ---
 
 <Base title={site.name} description={site.description}>
   <div class="shell page-top home">
     <section class="intro" aria-labelledby="intro-heading">
       <div class="intro__text">
-        <h1 id="intro-heading" class="lede">
-          {before}<span class="accent">{accent}</span>{after}
-        </h1>
+        <h1 id="intro-heading" class="lede">{site.name}</h1>
 
         <div class="intro__body" data-reveal style="--reveal-delay:180ms">
           {site.intro.body.map((paragraph) => <p>{paragraph}</p>)}
@@ -58,7 +53,6 @@ const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
                 quality={78}
               />
             </span>
-            <figcaption class="print__caption">{site.name}</figcaption>
           </figure>
         ) : portrait && (
           <a
@@ -80,23 +74,6 @@ const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
           </a>
         )
       }
-    </section>
-
-    <section class="themes" aria-labelledby="themes-heading">
-      <h2 id="themes-heading" class="meta themes__label">What I keep returning to</h2>
-      <ol class="themes__list" role="list">
-        {
-          site.intro.themes.map((theme, index) => (
-            <li data-reveal style={`--reveal-delay:${index * 110}ms`}>
-              <span class="meta themes__num" aria-hidden="true">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              <h3 class="themes__title">{theme.title}</h3>
-              <p class="themes__text">{theme.text}</p>
-            </li>
-          ))
-        }
-      </ol>
     </section>
 
     <InkDivider />
@@ -151,7 +128,7 @@ const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
                 />
               </span>
               <span class="meta">Story lane · {story.length} photographs</span>
-              <h3 class="onward__title">{firstPhoto.data.title}, and what came after</h3>
+              <h3 class="onward__title">{firstPhoto.data.title}</h3>
               <p class="onward__blurb">
                 Pictures from the way here, one at a time, each with the reason it
                 matters beside it.

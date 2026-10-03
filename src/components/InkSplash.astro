@@ -1,24 +1,34 @@
 ---
 /**
- * Page transition: a drop of ink lands where you clicked, blooms across the
- * page, and then lifts away from the same spot to show the next page.
+ * Page transition: splash to cover, then fade the next page in.
  *
- * Drawn on a canvas each frame rather than played from a sprite, so the
- * edge stays crisp at any size — a phone in portrait gets the same drop as
- * a wide monitor. The shape is a set of soft harmonics around a circle
- * (the bloom) plus fine ones (the paper fibre catching the ink), with an
- * indigo bleed drawn just outside the core.
+ * The film is CodyHouse's 25-frame PNG sequence (MIT), recolored to the
+ * site ink. CSS `steps(24)` plays the drop like a flipbook, stepping the
+ * sprite behind a single frame. The last
+ * frame holds; we never play the sprite backwards. The cover fades and
+ * the incoming page fades up underneath.
  *
- * `transition:persist` keeps the canvas alive across the swap so the cover
- * never lifts early.
+ * `transition:persist` keeps the overlay alive across the swap so the
+ * cover never lifts early.
+ *
+ * License: https://codyhouse.co/mit
  */
+import { url } from '../lib/url';
+
+const sprite = url('/ink-splash.png');
 ---
 
-<canvas
+<div
   class="ink-splash"
   data-state="idle"
   aria-hidden="true"
-  transition:persist="ink-splash"></canvas>
+  transition:persist="ink-splash"
+  style={`--splash-src: url('${sprite}')`}
+>
+  <div class="ink-splash__drop">
+    <div class="ink-splash__film"></div>
+  </div>
+</div>
 
 <script>
   const ROOT_ATTR = 'data-ink-splash-ready';
@@ -30,321 +40,105 @@
   ) {
     document.documentElement.setAttribute(ROOT_ATTR, '');
 
-    /** How long the drop takes to cover the page, and to lift off it. */
-    const WASH_IN = 780;
-    const WASH_OUT = 640;
-
-    /** Rings drawn outside each blot's core to feather its edge. */
-    const RIMS = 6;
-
-    type Point = { x: number; y: number };
-    type Wave = { k: number; amp: number; phase: number; drift: number };
-    type Blot = {
-      x: number;
-      y: number;
-      /** Final radius, in CSS pixels. */
-      r: number;
-      /** When it starts and how long it takes, as fractions of the run. */
-      start: number;
-      span: number;
-      waves: Wave[];
-      fibre: Wave[];
-      /** True for the bloom: it lands, then creeps outwards. */
-      spread: boolean;
-      /** Streaks are stretched along the direction they were thrown. */
-      stretch: number;
-      angle: number;
+    // Decode the sprite while the reader is idle, so the first click
+    // doesn't pay for it mid-animation.
+    const warm = () => {
+      const node = splash();
+      const src = node && getComputedStyle(node).getPropertyValue('--splash-src');
+      const href = src?.match(/url\(['"]?(.+?)['"]?\)/)?.[1];
+      if (!href) return;
+      const img = new Image();
+      img.src = href;
+      img.decode?.().catch(() => {});
+      warmed = img;
     };
+    let warmed: HTMLImageElement | null = null;
+    if ('requestIdleCallback' in window) requestIdleCallback(warm, { timeout: 2000 });
+    else setTimeout(warm, 1200);
 
-    const canvas = () => document.querySelector<HTMLCanvasElement>('canvas.ink-splash');
+    /** Matches `--dur-splash-in`. The last frame is a solid cover. */
+    const WASH_IN = 800;
+    const splash = () => document.querySelector<HTMLElement>('.ink-splash');
 
-    const rand = (min: number, max: number) => min + Math.random() * (max - min);
-    const easeOut = (t: number) => 1 - Math.pow(1 - t, 3);
-    const easeInOut = (t: number) =>
-      t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
-    const clamp01 = (t: number) => Math.min(1, Math.max(0, t));
+    let lastX = 50;
+    let lastY = 50;
 
-    function waves(count: number, from: number, to: number, amp: number): Wave[] {
-      return Array.from({ length: count }, () => {
-        const k = Math.round(rand(from, to));
-        return {
-          k,
-          amp: (amp * rand(0.5, 1)) / Math.pow(k, 0.55),
-          phase: rand(0, Math.PI * 2),
-          drift: rand(-0.7, 0.7),
-        };
-      });
-    }
-
-    function blot(x: number, y: number, r: number, start: number, span: number, rough = 1): Blot {
-      return {
-        x,
-        y,
-        r,
-        start,
-        span,
-        waves: waves(7, 2, 11, 0.2 * rough),
-        fibre: [...waves(6, 12, 24, 0.05), ...waves(8, 28, 70, 0.03)],
-        spread: false,
-        stretch: 1,
-        angle: 0,
-      };
-    }
-
-    /** Where the last pointer went down — the drop lands under the finger. */
-    let pointer: (Point & { at: number }) | null = null;
-    document.addEventListener(
-      'pointerdown',
-      (event) => {
-        pointer = { x: event.clientX, y: event.clientY, at: performance.now() };
-      },
-      { capture: true, passive: true },
-    );
-
-    function origin(source?: Element): Point {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      if (pointer && performance.now() - pointer.at < 1500) return pointer;
-      const box = source?.getBoundingClientRect();
-      if (box && box.width && box.bottom > 0 && box.top < h) {
-        return { x: box.left + box.width / 2, y: box.top + box.height / 2 };
+    /** A new landing: place, flip, and turn — then scale so the last frame still covers. */
+    function scatter(node: HTMLElement) {
+      let x = 18 + Math.random() * 64;
+      let y = 18 + Math.random() * 64;
+      // Don't land too near the last drop; it reads as the same splash.
+      if (Math.hypot(x - lastX, y - lastY) < 22) {
+        x = Math.min(82, Math.max(18, 100 - x));
+        y = Math.min(82, Math.max(18, y > 50 ? y - 28 : y + 28));
       }
-      return { x: w * rand(0.35, 0.65), y: h * rand(0.35, 0.65) };
+      lastX = x;
+      lastY = y;
+
+      const flipX = Math.random() < 0.5 ? -1 : 1;
+      const flipY = Math.random() < 0.5 ? -1 : 1;
+      const rot = Math.round(Math.random() * 32 - 16);
+      const offset = Math.max(Math.abs(x / 100 - 0.5), Math.abs(y / 100 - 0.5));
+      const turn = (Math.abs(rot) * Math.PI) / 180;
+      const rotPad = Math.abs(Math.cos(turn)) + Math.abs(Math.sin(turn));
+      const reach = (1.14 + 2.5 * offset) * Math.max(1.1, rotPad);
+
+      node.style.setProperty('--splash-x', `${x.toFixed(1)}%`);
+      node.style.setProperty('--splash-y', `${y.toFixed(1)}%`);
+      node.style.setProperty('--splash-rot', `${rot}deg`);
+      node.style.setProperty('--splash-flip-x', String(flipX));
+      node.style.setProperty('--splash-flip-y', String(flipY));
+      node.style.setProperty('--splash-scale', reach.toFixed(3));
     }
 
-    /** One drop: a main bloom that must cover the page, satellites, and flecks. */
-    function drop(at: Point): Blot[] {
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      const reach = Math.max(
-        Math.hypot(at.x, at.y),
-        Math.hypot(w - at.x, at.y),
-        Math.hypot(at.x, h - at.y),
-        Math.hypot(w - at.x, h - at.y),
-      );
-      const unit = Math.min(w, h);
-      const blots: Blot[] = [];
-
-      // The bloom reaches the far corner just as the run ends; any gap the
-      // wobble leaves there is soaked through in the last few frames.
-      const bloom = blot(at.x, at.y, reach * 1.22, 0.02, 0.98);
-      bloom.spread = true;
-      blots.push(bloom);
-
-      // Satellites: drops that hit just beside the first and run into it.
-      const satellites = 4 + Math.floor(Math.random() * 3);
-      for (let i = 0; i < satellites; i++) {
-        const a = rand(0, Math.PI * 2);
-        const d = unit * rand(0.12, 0.34);
-        blots.push(
-          blot(
-            at.x + Math.cos(a) * d,
-            at.y + Math.sin(a) * d,
-            unit * rand(0.08, 0.2),
-            rand(0.02, 0.16),
-            rand(0.35, 0.6),
-          ),
-        );
+    function run(node: HTMLElement, state: 'in' | 'fade') {
+      if (node.dataset.state === state) {
+        node.setAttribute('data-state', 'idle');
+        void node.offsetWidth;
       }
-
-      // Flecks: thrown first, stretched along their flight, swallowed by the bloom.
-      const flecks = 10 + Math.floor(Math.random() * 8);
-      for (let i = 0; i < flecks; i++) {
-        const a = rand(0, Math.PI * 2);
-        const d = unit * rand(0.18, 0.62);
-        const fleck = blot(
-          at.x + Math.cos(a) * d,
-          at.y + Math.sin(a) * d,
-          Math.max(2, unit * rand(0.004, 0.02)),
-          rand(0, 0.12),
-          rand(0.08, 0.16),
-          0.6,
-        );
-        fleck.stretch = rand(1, 2.6);
-        fleck.angle = a;
-        blots.push(fleck);
-      }
-
-      return blots;
+      node.setAttribute('data-state', state);
     }
-
-    /** Trace one blot at progress `t` into `path`, grown by `grow` pixels. */
-    function trace(path: Path2D, b: Blot, t: number, time: number, grow: number) {
-      const p = clamp01((t - b.start) / b.span);
-      if (p <= 0) return;
-      // Big blots land small and then spread; small ones just land.
-      const r = b.spread
-        ? b.r * (0.06 * easeOut(Math.min(1, p / 0.12)) + 0.94 * easeInOut(p))
-        : b.r * easeOut(p);
-      if (r < 0.5) return;
-
-      // Fibre is measured in pixels, not as a share of the radius,
-      // so a page-sized bloom keeps a fine edge instead of a lumpy one.
-      const fibrePx = Math.min(r * 0.08, 14);
-      const steps = Math.min(360, Math.max(28, Math.round(r / 2)));
-      const cos = Math.cos(b.angle);
-      const sin = Math.sin(b.angle);
-
-      for (let i = 0; i <= steps; i++) {
-        const theta = (i / steps) * Math.PI * 2;
-        let soft = 0;
-        for (const wv of b.waves) soft += wv.amp * Math.sin(wv.k * theta + wv.phase + wv.drift * time);
-        let fine = 0;
-        for (const wv of b.fibre) fine += wv.amp * Math.sin(wv.k * theta + wv.phase);
-        const rr = r * (1 + soft) + fine * fibrePx * 10 + grow;
-
-        let dx = Math.cos(theta) * rr * b.stretch;
-        let dy = Math.sin(theta) * rr;
-        if (b.stretch !== 1) [dx, dy] = [dx * cos - dy * sin, dx * sin + dy * cos];
-
-        if (i === 0) path.moveTo(b.x + dx, b.y + dy);
-        else path.lineTo(b.x + dx, b.y + dy);
-      }
-      path.closePath();
-    }
-
-    function ink(name: string, fallback: string) {
-      const value = getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-      return value || fallback;
-    }
-
-    let frame = 0;
-    let finish: (() => void) | null = null;
-
-    function size(node: HTMLCanvasElement) {
-      // Cap the backing store: past 1.5× the edge is already finer than the fibre.
-      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
-      const w = window.innerWidth;
-      const h = window.innerHeight;
-      node.width = Math.round(w * ratio);
-      node.height = Math.round(h * ratio);
-      const ctx = node.getContext('2d')!;
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      return { ctx, w, h };
-    }
-
-    /** Run a phase; resolves when it has finished drawing. */
-    function play(node: HTMLCanvasElement, phase: 'in' | 'out', blots: Blot[]) {
-      cancelAnimationFrame(frame);
-      finish?.();
-
-      const { ctx, w, h } = size(node);
-      const core = ink('--ink', '#1a1a18');
-      const bleed = ink('--accent', '#454a7d');
-      const duration = phase === 'in' ? WASH_IN : WASH_OUT;
-      const begun = performance.now();
-      node.dataset.state = phase;
-
-      return new Promise<void>((resolve) => {
-        finish = resolve;
-
-        const draw = (now: number) => {
-          const raw = clamp01((now - begun) / duration);
-          const t = raw;
-          const time = (now - begun) / 1000;
-
-          const body = new Path2D();
-          // Several faint rims, each a little wider, read as one soft edge.
-          const rims = Array.from({ length: RIMS }, () => new Path2D());
-          for (const b of blots) {
-            trace(body, b, t, time, 0);
-            const edge = Math.min(4, 1 + b.r * 0.006);
-            rims.forEach((rim, i) => trace(rim, b, t, time, edge * (i + 1)));
-          }
-
-          ctx.clearRect(0, 0, w, h);
-          if (phase === 'in') {
-            // Wet edge first, a thin indigo bleed, then the ink itself.
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.fillStyle = bleed;
-            for (const rim of rims) {
-              ctx.globalAlpha = 0.06;
-              ctx.fill(rim);
-            }
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = core;
-            ctx.fill(body);
-            // The last stretch: whatever the bloom has not reached soaks through.
-            if (raw > 0.8) {
-              ctx.globalAlpha = (raw - 0.8) / 0.2;
-              ctx.fillRect(0, 0, w, h);
-              ctx.globalAlpha = 1;
-            }
-          } else {
-            // Paper soaks the ink back up from the middle outwards.
-            ctx.globalCompositeOperation = 'source-over';
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = core;
-            ctx.fillRect(0, 0, w, h);
-            ctx.globalCompositeOperation = 'destination-out';
-            for (const rim of rims) {
-              ctx.globalAlpha = 0.1;
-              ctx.fill(rim);
-            }
-            ctx.globalAlpha = 1;
-            ctx.fill(body);
-            ctx.globalCompositeOperation = 'source-over';
-          }
-
-          if (raw < 1) {
-            frame = requestAnimationFrame(draw);
-            return;
-          }
-
-          if (phase === 'in') {
-            // Hold a clean, solid cover while the next page loads.
-            ctx.globalAlpha = 1;
-            ctx.fillStyle = core;
-            ctx.fillRect(0, 0, w, h);
-          } else {
-            ctx.clearRect(0, 0, w, h);
-            node.dataset.state = 'idle';
-          }
-          finish = null;
-          resolve();
-        };
-
-        frame = requestAnimationFrame(draw);
-      });
-    }
-
-    let landing: Point = { x: 0, y: 0 };
 
     document.addEventListener('astro:before-preparation', (event) => {
-      const node = canvas();
+      const node = splash();
       if (!node) return;
-      const prepare = event as typeof event & {
-        loader: () => Promise<void>;
-        sourceElement?: Element;
-      };
+      const prepare = event as typeof event & { loader: () => Promise<void> };
       const load = prepare.loader;
-      landing = origin(prepare.sourceElement);
-      pointer = null;
 
       prepare.loader = async () => {
-        // Story-lane scrolling waits while the ink is down.
-        document.documentElement.classList.add('is-page-pending');
+        scatter(node);
+        run(node, 'in');
         // Hold the swap until the drop has covered the page.
-        await Promise.all([load(), play(node, 'in', drop(landing))]);
+        await Promise.all([
+          load(),
+          new Promise((resolve) => setTimeout(resolve, WASH_IN)),
+        ]);
       };
     });
 
     document.addEventListener('astro:before-swap', (event) => {
       const next = (event as Event & { newDocument?: Document }).newDocument;
+      // First paint of the incoming page is invisible; it fades in after the swap.
       next?.documentElement.classList.add('js', 'is-page-pending');
     });
 
     document.addEventListener('astro:after-swap', () => {
-      const node = canvas();
-      if (node?.dataset.state !== 'in') return;
-      // Lift from where it landed, a little rougher and a little faster.
-      const lift = drop(landing).slice(0, 6);
-      // The lift opens at once rather than landing and creeping.
-      lift[0].spread = false;
-      lift[0].start = 0;
-      void play(node, 'out', lift).then(() => {
-        document.documentElement.classList.remove('is-page-pending');
-      });
+      const node = splash();
+      if (node?.getAttribute('data-state') === 'in') run(node, 'fade');
+      if (document.documentElement.classList.contains('is-page-pending')) {
+        requestAnimationFrame(() => {
+          document.documentElement.classList.add('is-page-arrive');
+        });
+      }
+    });
+
+    document.addEventListener('animationend', (event) => {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (!target.classList.contains('ink-splash')) return;
+      if (target.dataset.state !== 'fade') return;
+      target.setAttribute('data-state', 'idle');
+      document.documentElement.classList.remove('is-page-pending', 'is-page-arrive');
     });
   }
 </script>
