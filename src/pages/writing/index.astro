@@ -17,120 +17,206 @@ const stream = await Promise.all(
     minutes: readingTime(entry.body),
   })),
 );
+
+const essays = entries.filter((entry) => entry.data.kind === 'article').length;
 ---
 
 <Base
   title="Writing"
   description={`Essays and shorter notes by ${site.name}, in one chronological stream.`}
 >
-  <div class="shell shell--narrow page-top page-bottom">
+  <div class="shell page-top page-bottom writing">
     <header class="writing__head">
       <InkHeading as="h1">Writing</InkHeading>
-      <p class="writing__standfirst">
-        Long-form essays on growth, on what we mean by alive, and on the
-        economy that appears once AI agents start doing the buying. Most of
-        them first ran on X; these are the versions I stand behind.
+      <p class="writing__tally meta">
+        {essays} {essays === 1 ? 'essay' : 'essays'}
+        <span aria-hidden="true">·</span>
+        <a href={url('/rss.xml')}>RSS</a>
       </p>
     </header>
 
-    <ol class="stream" role="list">
+    <ol class="toc" role="list">
       {
-        stream.map(({ entry, Content, minutes }, index) => (
-          <li
-            id={entry.id}
-            class:list={['entry', `entry--${entry.data.kind}`]}
-            data-reveal
-            style={`--reveal-delay:${Math.min(index, 4) * 70}ms`}
-          >
-            <p class="entry__head meta">
-              <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
-              <span class:list={['kind', `kind--${entry.data.kind}`]}>
-                {entry.data.kind === 'article' ? `Article · ${minutes} min` : 'Thought'}
-              </span>
-            </p>
-
-            {entry.data.kind === 'article' ? (
-              <>
+        stream.map(({ entry, Content, minutes }, index) =>
+          entry.data.kind === 'article' ? (
+            <li data-reveal style={`--reveal-delay:${Math.min(index, 4) * 80}ms`}>
+              <a class="toc__row" href={url(`/writing/${entry.id}/`)} id={entry.id}>
+                <p class="toc__meta meta">
+                  <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
+                  <span>{minutes} min read</span>
+                </p>
+                <h2 class="toc__title">{entry.data.title}</h2>
+                {entry.data.description && (
+                  <p class="toc__summary">{entry.data.description}</p>
+                )}
                 {entry.data.cover && (
-                  <a
-                    class="entry__cover"
-                    href={url(`/writing/${entry.id}/`)}
-                    tabindex="-1"
-                    aria-hidden="true"
-                  >
+                  <span class="toc__thumb">
                     <Image
                       src={entry.data.cover}
                       alt=""
-                      widths={[480, 760, 1000]}
-                      sizes="(min-width: 56rem) 34rem, 100vw"
-                      quality={72}
+                      widths={[200, 320, 480]}
+                      sizes="(min-width: 56rem) 15rem, 6rem"
+                      quality={74}
                     />
-                  </a>
+                  </span>
                 )}
-                <h2 class="entry__title">
-                  <a class="ink-link" href={url(`/writing/${entry.id}/`)}>
-                    {entry.data.title}
-                  </a>
-                </h2>
-                {entry.data.description && (
-                  <p class="entry__summary">{entry.data.description}</p>
-                )}
-                <a
-                  class="ink-link read-more meta meta--plain"
-                  href={url(`/writing/${entry.id}/`)}
-                  tabindex="-1"
-                  aria-hidden="true"
-                >
-                  Read the essay
-                </a>
-              </>
-            ) : (
-              <div class="entry__thought">{Content && <Content />}</div>
-            )}
-          </li>
-        ))
+              </a>
+            </li>
+          ) : (
+            <li data-reveal style={`--reveal-delay:${Math.min(index, 4) * 80}ms`}>
+              <div class="toc__row toc__row--note" id={entry.id}>
+                <p class="toc__meta meta">
+                  <time datetime={isoDate(entry.data.date)}>{formatDate(entry.data.date)}</time>
+                  <span>Note</span>
+                </p>
+                <div class="toc__note">{Content && <Content />}</div>
+              </div>
+            </li>
+          ),
+        )
       }
     </ol>
-
-    <p class="writing__feed meta meta--plain">
-      <a class="ink-link" href={url('/rss.xml')}>Subscribe by RSS</a>
-    </p>
   </div>
 </Base>
 
 <style>
   .writing__head {
-    padding-block: var(--space-m) var(--space-l);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-s) var(--space-l);
+    padding-block: var(--space-m) var(--space-xl);
   }
 
-  .writing__standfirst {
-    margin-block-start: var(--space-m);
+
+  .writing__tally {
+    display: flex;
+    gap: 0.6em;
+    white-space: nowrap;
+  }
+
+  .writing__tally a {
+    text-decoration: none;
+  }
+
+  .writing__tally a:hover,
+  .writing__tally a:focus-visible {
+    color: var(--accent-ink);
+  }
+
+  /* ---- The contents list ------------------------------------------------- */
+  .toc {
+    margin: 0;
+    border-block-end: 1px solid var(--rule);
+  }
+
+  .toc > li {
+    border-block-start: 1px solid var(--rule);
+  }
+
+  /* Phone: date and title beside a small square thumbnail, summary below. */
+  .toc__row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 5.5rem;
+    grid-template-areas:
+      'meta thumb'
+      'title thumb'
+      'summary summary';
+    column-gap: var(--space-s);
+    align-items: start;
+    padding-block: var(--space-l);
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .toc__row--note {
+    grid-template-areas:
+      'meta meta'
+      'title title';
+  }
+
+  .toc__meta {
+    grid-area: meta;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 1.1em;
+    margin-block-end: var(--space-2xs);
+  }
+
+  .toc__title {
+    grid-area: title;
+    font-size: var(--step-2);
+    line-height: 1.18;
+    text-wrap: balance;
+    transition: color 420ms var(--ease-ink);
+  }
+
+  .toc__summary {
+    grid-area: summary;
+    margin-block-start: var(--space-xs);
     color: var(--ink-muted);
-    max-width: 46ch;
+    max-width: 52ch;
   }
 
-  .entry__cover {
+  .toc__note {
+    grid-area: title;
+    font-size: var(--step-1);
+    max-width: var(--measure);
+  }
+
+  .toc__thumb {
+    grid-area: thumb;
     display: block;
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1;
     overflow: hidden;
-    margin-block: var(--space-s) var(--space-m);
     background: var(--paper-sunk);
     box-shadow: var(--photo-shadow);
   }
 
-  .entry__cover img {
+  .toc__thumb img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: left center;
+    object-position: 20% center;
     transition: transform 900ms var(--ease-ink);
   }
 
-  .entry__cover:hover img {
-    transform: scale(1.03);
+  .toc__row:hover .toc__title,
+  .toc__row:focus-visible .toc__title {
+    color: var(--accent-ink);
   }
 
-  .writing__feed {
-    margin-block-start: var(--space-2xl);
+  .toc__row:hover .toc__thumb img,
+  .toc__row:focus-visible .toc__thumb img {
+    transform: scale(1.04);
+  }
+
+  /* Computer: date in its own column, a wider thumbnail on the right. */
+  @media (min-width: 48rem) {
+    .toc__row {
+      grid-template-columns: 9rem minmax(0, 1fr) 15rem;
+      grid-template-rows: auto 1fr;
+      grid-template-areas:
+        'meta title thumb'
+        'meta summary thumb';
+      column-gap: var(--space-xl);
+      padding-block: var(--space-xl);
+    }
+
+    .toc__row--note {
+      grid-template-areas: 'meta title title';
+    }
+
+    .toc__meta {
+      flex-direction: column;
+      gap: 0.35em;
+      margin: 0;
+      padding-block-start: 0.45em;
+    }
+
+    .toc__thumb {
+      aspect-ratio: 4 / 3;
+    }
   }
 </style>

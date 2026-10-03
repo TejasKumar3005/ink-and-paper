@@ -5,7 +5,7 @@ import InkHeading from '../components/InkHeading.astro';
 import InkDivider from '../components/InkDivider.astro';
 import { site } from '../site.config';
 import { url } from '../lib/url';
-import { formatDate, getArticles, getStory, isoDate, readingTime } from '../lib/content';
+import { getArticles, getStory, readingTime } from '../lib/content';
 
 const [articles, story] = await Promise.all([getArticles(), getStory()]);
 const latest = articles[0];
@@ -29,13 +29,6 @@ const [headshot] = Object.values(
 
         <div class="intro__body" data-reveal style="--reveal-delay:180ms">
           {site.intro.body.map((paragraph) => <p>{paragraph}</p>)}
-        </div>
-
-        <div class="now" data-reveal style="--reveal-delay:300ms">
-          <p class="meta">
-            {site.intro.now.label} — {site.intro.now.updated}
-          </p>
-          <p class="now__text">{site.intro.now.text}</p>
         </div>
       </div>
 
@@ -97,15 +90,9 @@ const [headshot] = Object.values(
                 </span>
               )}
               <span class="meta">
-                Latest essay ·{' '}
-                <time datetime={isoDate(latest.data.date)}>
-                  {formatDate(latest.data.date)}
-                </time>{' '}
-                · {readingTime(latest.body)} min
+                Latest essay · {readingTime(latest.body)} min
               </span>
               <h3 class="onward__title">{latest.data.title}</h3>
-              <p class="onward__blurb">{latest.data.description}</p>
-              <span class="ink-link onward__more meta meta--plain">Read the essay</span>
             </a>
           )
         }
@@ -127,23 +114,13 @@ const [headshot] = Object.values(
                   quality={72}
                 />
               </span>
-              <span class="meta">Story lane · {story.length} photographs</span>
+              <span class="meta">Story lane · {story.length} photos</span>
               <h3 class="onward__title">{firstPhoto.data.title}</h3>
-              <p class="onward__blurb">
-                Pictures from the way here, one at a time, each with the reason it
-                matters beside it.
-              </p>
-              <span class="ink-link onward__more meta meta--plain">Walk the lane</span>
             </a>
           )
         }
       </div>
 
-      <p class="onward__all" data-reveal style="--reveal-delay:240ms">
-        <a class="ink-link" href={url('/writing/')}>All writing</a>
-        <span class="onward__sep" aria-hidden="true">·</span>
-        <a class="ink-link" href={url('/contact/')}>Write to me</a>
-      </p>
     </section>
   </div>
 </Base>
@@ -155,8 +132,7 @@ const [headshot] = Object.values(
     padding-block: var(--space-l) var(--space-xl);
   }
 
-  .intro__body,
-  .now {
+  .intro__body {
     margin-block-start: var(--space-xl);
   }
 
@@ -168,20 +144,10 @@ const [headshot] = Object.values(
       padding-block: var(--space-l) var(--space-xl);
     }
 
-    .intro__body,
-    .now {
+    .intro__body {
       margin-block-start: var(--space-l);
     }
   }
 
-  .onward__all {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-s);
-    margin-block-start: var(--space-xl);
-  }
 
-  .onward__sep {
-    color: var(--rule-strong);
-  }
 </style>

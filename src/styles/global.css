@@ -387,6 +387,11 @@
     text-decoration: none;
   }
 
+  /* The home page leads with the name, so the header does not repeat it. */
+  .masthead__name--home {
+    visibility: hidden;
+  }
+
   @media (max-width: 40rem) {
     html.is-lane .masthead {
       padding-block: var(--space-xs);
@@ -467,8 +472,8 @@
 
   /* ---- Footer ------------------------------------------------------------ */
   .colophon {
-    padding-block: var(--space-xl) var(--space-l);
-    margin-block-start: var(--space-2xl);
+    padding-block: var(--space-l);
+    margin-block-start: var(--space-xl);
   }
 
   .colophon__inner {
@@ -530,17 +535,7 @@
     margin-block-start: var(--space-m);
   }
 
-  .now {
-    max-width: var(--measure);
-    padding-inline-start: var(--space-m);
-    border-inline-start: 1px solid var(--rule);
-  }
 
-  .now__text {
-    font-size: var(--step-1);
-    line-height: 1.55;
-    margin-block-start: var(--space-2xs);
-  }
 
   .onward {
     display: grid;
@@ -551,8 +546,6 @@
   .onward__item {
     display: block;
     text-decoration: none;
-    padding-block-start: var(--space-s);
-    border-block-start: 1px solid var(--rule);
   }
 
   .onward__title {
@@ -566,15 +559,7 @@
     color: var(--accent-ink);
   }
 
-  .onward__blurb {
-    color: var(--ink-muted);
-    max-width: 34ch;
-  }
 
-  .onward__more {
-    display: inline-block;
-    margin-block-start: var(--space-s);
-  }
 
   /* A cropped window onto the cover; it eases in a touch on hover. */
   .onward__media {
@@ -603,13 +588,19 @@
   .print {
     display: block;
     justify-self: center;
-    width: min(100%, 20rem);
+    width: min(100%, 16rem);
     padding: 0.7rem 0.7rem 0;
     background: var(--paper-raised);
     box-shadow: var(--photo-shadow);
     text-decoration: none;
     transform: rotate(1.6deg);
     transition: transform 700ms var(--ease-ink);
+  }
+
+  @media (min-width: 56rem) {
+    .print {
+      width: 20rem;
+    }
   }
 
   .print:hover,
@@ -987,7 +978,7 @@
   }
 
   .article__title {
-    font-size: var(--step-3);
+    font-size: var(--step-4);
     margin-block: var(--space-s) var(--space-m);
   }
 

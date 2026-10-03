@@ -31,21 +31,13 @@ export const site = {
   intro: {
     body: [
       'I am a computer scientist at IIT Delhi, building TheAgentNet — so businesses can sell to AI agents the way they already sell to people.',
-      'Before that: a first karate medal, a city drawn to float, and a desk I wrapped a blanket around because the work would not wait. The story lane has the pictures. The writing has the arguments.',
     ],
 
     /** The story-lane photograph pinned beside the introduction (its file name). */
     portrait: '04-the-desk',
-
-    now: {
-      label: 'Currently',
-      text: 'Building TheAgentNet, and writing about what counts as alive once agents start clearing markets.',
-      updated: 'September 2026',
-    },
   },
 
-  contactNote:
-    'Write to me. I read everything, and I answer like a person — not a ticket queue.',
+  contactNote: 'Say hello. I read everything.',
 
   links: [
     { label: 'GitHub', href: 'https://github.com/TejasKumar3005', handle: '@TejasKumar3005' },
