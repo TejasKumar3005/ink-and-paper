@@ -13,6 +13,13 @@ const firstPhoto = story[0];
 const portrait =
   story.find((entry) => entry.id === site.intro.portrait) ?? story[story.length - 1];
 
+/** A photograph of me, if one is dropped in at src/assets/portrait.(jpg|png|webp). */
+const [headshot] = Object.values(
+  import.meta.glob<{ default: ImageMetadata }>('../assets/portrait.{jpg,jpeg,png,webp}', {
+    eager: true,
+  }),
+).map((module) => module.default);
+
 /** The intro lede marks one word with {braces}; that word gets the accent. */
 const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
 ---
@@ -38,7 +45,22 @@ const [before, accent = '', after = ''] = site.intro.lede.split(/\{(.+?)\}/);
       </div>
 
       {
-        portrait && (
+        headshot ? (
+          <figure class="print print--portrait" data-develop>
+            <span class="print__frame">
+              <Image
+                src={headshot}
+                alt={`${site.name}, smiling, in a grey turtleneck on a hillside with cloud and pine forest behind`}
+                widths={[360, 540, 720]}
+                sizes="(min-width: 56rem) 20rem, 70vw"
+                loading="eager"
+                fetchpriority="high"
+                quality={78}
+              />
+            </span>
+            <figcaption class="print__caption">{site.name}</figcaption>
+          </figure>
+        ) : portrait && (
           <a
             class="print"
             href={url(`/story/#${portrait.id}`)}

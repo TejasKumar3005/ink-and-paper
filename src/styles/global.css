@@ -118,8 +118,6 @@
     --dur-stroke: 1100ms;
     --dur-develop: 1500ms;
     --dur-slide: 640ms;
-    --dur-splash-in: 800ms;
-    --dur-splash-fade: 700ms;
   }
 
   /* Computer: a tighter editorial measure. Phone keeps the roomier scale. */
@@ -622,6 +620,19 @@
     aspect-ratio: 4 / 5;
     height: auto;
     object-fit: cover;
+  }
+
+  /* A headshot: square original, cropped in to the face and shoulders. */
+  .print__frame {
+    display: block;
+    overflow: hidden;
+  }
+
+  .print--portrait img {
+    object-position: 50% 62%;
+    /* `scale`, not `transform`: the develop-in animation owns transform. */
+    scale: 1.22;
+    transform-origin: 50% 74%;
   }
 
   .print__caption {
