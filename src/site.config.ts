@@ -33,8 +33,27 @@ export const site = {
     lede: 'To be alive is to {grow}.',
 
     body: [
-      'I am a computer scientist at IIT Delhi, and I am building TheAgentNet — so businesses can sell to AI agents the way they already sell to people.',
+      'I am a computer scientist at IIT Delhi, building TheAgentNet — so businesses can sell to AI agents the way they already sell to people.',
       'Before that: a first karate medal, a city drawn to float, and a desk I wrapped a blanket around because the work would not wait. The story lane has the pictures. The writing has the arguments.',
+    ],
+
+    /** The story-lane photograph pinned beside the introduction (its file name). */
+    portrait: '04-the-desk',
+
+    /** What the writing keeps circling back to. Short, one line each. */
+    themes: [
+      {
+        title: 'What counts as alive',
+        text: 'Life as structured, self-sustaining growth — not a checklist of biology.',
+      },
+      {
+        title: 'Markets for agents',
+        text: 'What happens to the demand curve when software does the buying.',
+      },
+      {
+        title: 'Building TheAgentNet',
+        text: 'The plumbing that lets a business be found, trusted and paid by an agent.',
+      },
     ],
 
     now: {
@@ -47,10 +66,21 @@ export const site = {
   contactNote:
     'Write to me. I read everything, and I answer like a person — not a ticket queue.',
 
+  /** Shown under the note: the conversations I most want to have. */
+  contactTopics: [
+    'Selling to AI agents, or building for them',
+    'Something in an essay you think is wrong',
+    'Research, collaboration, or just a good question',
+  ],
+
   links: [
     { label: 'GitHub', href: 'https://github.com/TejasKumar3005', handle: '@TejasKumar3005' },
     { label: 'X', href: 'https://x.com/tejasktwt', handle: '@tejasktwt' },
-    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/tejas-kumar-brain' },
+    {
+      label: 'LinkedIn',
+      href: 'https://www.linkedin.com/in/tejas-kumar-brain',
+      handle: 'in/tejas-kumar-brain',
+    },
   ] satisfies SocialLink[],
 
   nav: [

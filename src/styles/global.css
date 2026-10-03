@@ -497,12 +497,20 @@
 
   /* ---- Home -------------------------------------------------------------- */
   .lede {
-    font-size: var(--step-3);
-    line-height: 1.22;
+    font-size: var(--step-4);
+    line-height: 1.12;
     letter-spacing: -0.018em;
     max-width: 22ch;
     text-wrap: balance;
     margin-block: var(--space-m) 0;
+  }
+
+  @media (min-width: 56rem) {
+    .lede {
+      font-size: clamp(2.6rem, 1.4rem + 2.4vw, 3.4rem);
+      line-height: 1.08;
+      letter-spacing: -0.024em;
+    }
   }
 
   .lede .accent {
@@ -566,6 +574,100 @@
   .onward__more {
     display: inline-block;
     margin-block-start: var(--space-s);
+  }
+
+  /* A cropped window onto the cover; it eases in a touch on hover. */
+  .onward__media {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    margin-block: var(--space-2xs) var(--space-s);
+    background: var(--paper-sunk);
+    box-shadow: var(--photo-shadow);
+  }
+
+  .onward__media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+    transition: transform 900ms var(--ease-ink);
+  }
+
+  .onward__item:hover .onward__media img,
+  .onward__item:focus-visible .onward__media img {
+    transform: scale(1.03);
+  }
+
+  /* ---- The print pinned beside the introduction --------------------------- */
+  .print {
+    display: block;
+    justify-self: center;
+    width: min(100%, 20rem);
+    padding: 0.7rem 0.7rem 0;
+    background: var(--paper-raised);
+    box-shadow: var(--photo-shadow);
+    text-decoration: none;
+    transform: rotate(1.6deg);
+    transition: transform 700ms var(--ease-ink);
+  }
+
+  .print:hover,
+  .print:focus-visible {
+    transform: rotate(0deg) translateY(-2px);
+  }
+
+  .print img {
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    height: auto;
+    object-fit: cover;
+  }
+
+  .print__caption {
+    display: block;
+    padding-block: var(--space-xs);
+    text-align: center;
+    font-style: italic;
+    color: var(--ink-muted);
+  }
+
+  /* ---- Themes ------------------------------------------------------------ */
+  .themes {
+    padding-block: var(--space-m) 0;
+  }
+
+  .themes__label {
+    font-size: var(--step--1);
+    font-weight: 400;
+    letter-spacing: 0.09em;
+    margin-block-end: var(--space-m);
+  }
+
+  .themes__list {
+    display: grid;
+    gap: var(--space-l);
+    grid-template-columns: repeat(auto-fit, minmax(min(15rem, 100%), 1fr));
+    margin: 0;
+  }
+
+  .themes__list li {
+    padding-block-start: var(--space-s);
+    border-block-start: 1px solid var(--rule);
+  }
+
+  .themes__num {
+    color: var(--accent);
+  }
+
+  .themes__title {
+    font-size: var(--step-1);
+    margin-block: var(--space-3xs) var(--space-2xs);
+  }
+
+  .themes__text {
+    color: var(--ink-muted);
+    max-width: 30ch;
   }
 
   /* ---- Story lane -------------------------------------------------------- */
@@ -1103,6 +1205,10 @@
 
   .link-list li {
     border-block-start: 1px solid var(--rule);
+  }
+
+  .link-list li:last-child {
+    border-block-end: 1px solid var(--rule);
   }
 
   .link-list a {

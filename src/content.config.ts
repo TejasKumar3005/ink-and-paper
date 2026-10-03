@@ -30,14 +30,17 @@ const story = defineCollection({
  */
 const writing = defineCollection({
   loader: glob({ base: './src/content/writing', pattern: '**/*.md' }),
-  schema: z.object({
-    title: z.string().optional(),
-    date: z.coerce.date(),
-    kind: z.enum(['article', 'thought']).default('article'),
-    /** Used for the stream summary and the page description. */
-    description: z.string().optional(),
-    draft: z.boolean().default(false),
-  }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string().optional(),
+      date: z.coerce.date(),
+      kind: z.enum(['article', 'thought']).default('article'),
+      /** Used for the stream summary and the page description. */
+      description: z.string().optional(),
+      /** Thumbnail for the home page and the writing stream. */
+      cover: image().optional(),
+      draft: z.boolean().default(false),
+    }),
 });
 
 export const collections = { story, writing };

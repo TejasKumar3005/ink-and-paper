@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import InkHeading from '../../components/InkHeading.astro';
@@ -26,8 +27,9 @@ const stream = await Promise.all(
     <header class="writing__head">
       <InkHeading as="h1">Writing</InkHeading>
       <p class="writing__standfirst">
-        Two essays I first published on X. One about what we mean by alive.
-        One about what happens when agents start clearing markets.
+        Long-form essays on growth, on what we mean by alive, and on the
+        economy that appears once AI agents start doing the buying. Most of
+        them first ran on X; these are the versions I stand behind.
       </p>
     </header>
 
@@ -49,6 +51,22 @@ const stream = await Promise.all(
 
             {entry.data.kind === 'article' ? (
               <>
+                {entry.data.cover && (
+                  <a
+                    class="entry__cover"
+                    href={url(`/writing/${entry.id}/`)}
+                    tabindex="-1"
+                    aria-hidden="true"
+                  >
+                    <Image
+                      src={entry.data.cover}
+                      alt=""
+                      widths={[480, 760, 1000]}
+                      sizes="(min-width: 56rem) 34rem, 100vw"
+                      quality={72}
+                    />
+                  </a>
+                )}
                 <h2 class="entry__title">
                   <a class="ink-link" href={url(`/writing/${entry.id}/`)}>
                     {entry.data.title}
@@ -57,6 +75,14 @@ const stream = await Promise.all(
                 {entry.data.description && (
                   <p class="entry__summary">{entry.data.description}</p>
                 )}
+                <a
+                  class="ink-link read-more meta meta--plain"
+                  href={url(`/writing/${entry.id}/`)}
+                  tabindex="-1"
+                  aria-hidden="true"
+                >
+                  Read the essay
+                </a>
               </>
             ) : (
               <div class="entry__thought">{Content && <Content />}</div>
@@ -80,7 +106,28 @@ const stream = await Promise.all(
   .writing__standfirst {
     margin-block-start: var(--space-m);
     color: var(--ink-muted);
-    max-width: 40ch;
+    max-width: 46ch;
+  }
+
+  .entry__cover {
+    display: block;
+    aspect-ratio: 16 / 9;
+    overflow: hidden;
+    margin-block: var(--space-s) var(--space-m);
+    background: var(--paper-sunk);
+    box-shadow: var(--photo-shadow);
+  }
+
+  .entry__cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+    transition: transform 900ms var(--ease-ink);
+  }
+
+  .entry__cover:hover img {
+    transform: scale(1.03);
   }
 
   .writing__feed {

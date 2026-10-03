@@ -2,6 +2,7 @@
 title: The Agentic Economy is about to 100x everything
 date: 2026-05-08
 kind: article
+cover: ../../assets/writing/the-agentic-economy/cover.jpg
 description: Trillions of dollars do not make sense for a faster inbox. The prize is agents that finally clear the rest of the demand curve.
 ---
 

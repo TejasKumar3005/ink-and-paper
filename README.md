@@ -33,8 +33,13 @@ npm run dev      # http://localhost:4321
 ## Where to edit your bio and links
 
 **`src/site.config.ts`.** That is the one file. It holds your name, tagline,
-meta description, email, social links, navigation, the home-page introduction
-and the "Currently" line. Nothing personal is hard-coded anywhere else.
+meta description, email, social links, navigation, the home-page introduction,
+the "Currently" line, the three themes under the introduction, the story-lane
+photograph pinned beside it (`intro.portrait`), and the contact-page topics.
+Nothing personal is hard-coded anywhere else.
+
+An essay's thumbnail on the home page and the writing stream comes from the
+optional `cover:` field in its frontmatter.
 
 Two things live outside it, both in `public/`:
 

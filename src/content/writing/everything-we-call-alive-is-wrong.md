@@ -2,6 +2,7 @@
 title: Everything We Call "Alive" Is Wrong
 date: 2026-04-10
 kind: article
+cover: ../../assets/writing/everything-we-call-alive-is-wrong/cover.jpg
 description: The map you were handed is broken. Life is not a checklist of biological functions — it is structured, self-sustaining growth.
 ---
 
