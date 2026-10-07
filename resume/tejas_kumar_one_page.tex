@@ -23,12 +23,12 @@
 % One-page version: Education, Awards, Work Experience and Publications only.
 % Compile with XeLaTeX or LuaLaTeX (academicons requires a Unicode engine).
 
-\documentclass[a4paper,10pt]{article}
+\documentclass[letterpaper,10pt]{article}
 
 %----------------------------------------------------------------------------------------
 %	PACKAGES
 %----------------------------------------------------------------------------------------
-\usepackage[a4paper,top=1.1cm,bottom=1.1cm,left=1.4cm,right=1.4cm]{geometry}
+\usepackage[letterpaper,top=1.0cm,bottom=1.0cm,left=1.3cm,right=1.3cm]{geometry}
 \usepackage{parskip}
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{tabularx}
@@ -42,7 +42,7 @@
 
 % section headings
 \titleformat{\section}{\large\scshape\raggedright}{}{0em}{}[\titlerule]
-\titlespacing{\section}{0pt}{6pt}{4pt}
+\titlespacing{\section}{0pt}{5pt}{3pt}
 
 % links
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}
@@ -56,7 +56,7 @@
 % \entry{title}{right-hand text}{description}
 \newcommand{\entry}[3]{%
   \textbf{#1} \hfill #2 \\[1pt]
-  #3\par\vspace{3pt}}
+  #3\par\vspace{2pt}}
 
 %----------------------------------------------------------------------------------------
 %	BEGIN DOCUMENT
@@ -68,7 +68,7 @@
 %	TITLE
 %----------------------------------------------------------------------------------------
 \begin{tabularx}{\linewidth}{@{} C @{}}
-\Huge{Tejas Kumar} \\[2pt]
+\huge{Tejas Kumar} \\[1pt]
 \small CSE Graduate from Indian Institute of Technology Delhi \\[2pt]
 \small
 \href{https://github.com/TejasKumar3005}{\raisebox{-0.05\height}\faGithub\ TejasKumar3005} \ $|$ \
@@ -138,6 +138,6 @@ Case study of the National Institute of Ayurveda, Jaipur, published in \textit{R
 \textbf{Built a multi-input algorithm} that \textbf{reduces the overall cost} of a community-level rainwater harvesting system \textbf{by almost 40\%}. Won the \textbf{Best Paper Award at World Water Summit 2020}.}
 
 \entry{New Set of Derivations for the General Axis Theorem of Moment of Inertia}{\href{https://www.researchgate.net/publication/380000942_New_set_of_derivation_for_general_axis_theorem_for_moment_of_Inertia}{Link to paper}}{%
-A general axis theorem in \textbf{Physics} that computes the moment of inertia about any axis given any 3 non-planar moments of inertia of the object.}
+A general axis theorem in \textbf{Physics} giving the moment of inertia about any axis from any 3 non-planar moments of inertia.}
 
 \end{document}
