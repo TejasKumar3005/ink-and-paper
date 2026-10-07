@@ -28,7 +28,7 @@
 %----------------------------------------------------------------------------------------
 %	PACKAGES
 %----------------------------------------------------------------------------------------
-\usepackage[a4paper,top=1.3cm,bottom=1.3cm,left=1.5cm,right=1.5cm]{geometry}
+\usepackage[a4paper,top=1.1cm,bottom=1.1cm,left=1.4cm,right=1.4cm]{geometry}
 \usepackage{parskip}
 \usepackage[usenames,dvipsnames]{xcolor}
 \usepackage{tabularx}
@@ -42,7 +42,7 @@
 
 % section headings
 \titleformat{\section}{\large\scshape\raggedright}{}{0em}{}[\titlerule]
-\titlespacing{\section}{0pt}{8pt}{5pt}
+\titlespacing{\section}{0pt}{6pt}{4pt}
 
 % links
 \definecolor{linkcolour}{rgb}{0,0.2,0.6}
@@ -56,7 +56,7 @@
 % \entry{title}{right-hand text}{description}
 \newcommand{\entry}[3]{%
   \textbf{#1} \hfill #2 \\[1pt]
-  #3\par\vspace{5pt}}
+  #3\par\vspace{3pt}}
 
 %----------------------------------------------------------------------------------------
 %	BEGIN DOCUMENT
@@ -107,6 +107,9 @@
 %	EXPERIENCE
 %----------------------------------------------------------------------------------------
 \section{Work Experience}
+
+\entry{Founder, AgentNet}{}{%
+Built a platform \textbf{enabling businesses to sell directly to AI agents}. Grew to \textbf{1,000+ users} and \textbf{50,000+ searches within the first month}, with \textbf{\$40k in ad credits committed} on the platform by companies.}
 
 \entry{AI Researcher, Supermemory}{February 2026 -- May 2026}{%
 Designed a \textbf{new search and retrieval architecture} with \textbf{$O(n \log n)$ attention pairs} and \textbf{$O(\log n)$ search complexity}, giving \textbf{LLM-like reasoning retrieval with RAG-like scalability}. Created augmented datasets for memory use cases and used them to \textbf{RL fine-tune Qwen3.5 8B}, \textbf{beating Claude Sonnet 4.6 in memory extraction by 9\%}.}
