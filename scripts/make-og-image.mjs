@@ -1,5 +1,5 @@
 /**
- * Renders the 1200×630 social card (name + tagline) and the touch icon.
+ * Renders the 1200×630 social card (the name) and the touch icon.
  *
  *   npm run og
  */
@@ -31,10 +31,8 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
   </g>
   <path d="M96 430 C 280 418, 520 448, 760 428 S 1040 412, 1108 424"
         fill="none" stroke="#454a7d" stroke-width="3.2" stroke-linecap="round" opacity="0.7"/>
-  <text x="96" y="248" font-family="Fraunces, 'Iowan Old Style', serif" font-weight="600"
-        font-size="92" fill="#1a1a18" letter-spacing="-1.5">Tejas Kumar</text>
-  <text x="100" y="330" font-family="Instrument Serif, 'Iowan Old Style', serif" font-style="italic"
-        font-size="42" fill="#454a7d">To be alive is to grow</text>
+  <text x="96" y="352" font-family="Fraunces, 'Iowan Old Style', serif" font-weight="600"
+        font-size="104" fill="#1a1a18" letter-spacing="-1.5">Tejas Kumar</text>
 </svg>`;
 
 await mkdir(publicDir, { recursive: true });

@@ -32,11 +32,12 @@ npm run dev      # http://localhost:4321
 
 ## Where to edit your bio and links
 
-**`src/site.config.ts`.** That is the one file. It holds your name, tagline,
+**`src/site.config.ts`.** That is the one file. It holds your name,
 meta description, email, social links, navigation, the home-page introduction,
-the "Currently" line, the three themes under the introduction, the story-lane
-photograph pinned beside it (`intro.portrait`), and the contact-page topics.
-Nothing personal is hard-coded anywhere else.
+and the contact note. Nothing personal is hard-coded anywhere else.
+
+Your photo on the home page is `src/assets/portrait.jpg`; replace that file to
+change it.
 
 An essay's thumbnail on the home page and the writing stream comes from the
 optional `cover:` field in its frontmatter.
@@ -46,12 +47,12 @@ Two things live outside it, both in `public/`:
 - `public/og.jpg` — the 1200×630 image used when a link to the site is shared.
 - `public/favicon.svg` and `public/apple-touch-icon.png` — the site mark.
 
-The site is Tejas Kumar's. Name, tagline, email, GitHub, X, and LinkedIn
+The site is Tejas Kumar's. Name, email, GitHub, X, and LinkedIn
 live in `src/site.config.ts`. The writing stream is two essays first
 published on X — *Everything We Call "Alive" Is Wrong* and *The Agentic
 Economy is about to 100x everything* — with their original diagrams,
 and Conway's Game of Life as a looping clip. The social card
-(`public/og.jpg`) is the name and tagline on paper.
+(`public/og.jpg`) is the name on paper.
 
 The story-lane photographs are real; some captions and dates are still
 guesses, marked `TODO:` in `src/content/story/`.

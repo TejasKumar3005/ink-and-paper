@@ -19,8 +19,6 @@ export const site = {
   // Canonical URL. No trailing slash. Astro's `base` is derived from this.
   url: 'https://tejas.website',
 
-  tagline: 'To be alive is to grow',
-
   description:
     'Tejas Kumar — writing on life, agents, and the work of growing. A story lane, essays, and a way to write back.',
 
