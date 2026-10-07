@@ -1,0 +1,136 @@
+%-----------------------------------------------------------------------------------------------------------------------------------------------%
+%	The MIT License (MIT)
+%
+%	Copyright (c) 2021 Jitin Nair
+%
+%	Permission is hereby granted, free of charge, to any person obtaining a copy
+%	of this software and associated documentation files (the "Software"), to deal
+%	in the Software without restriction, including without limitation the rights
+%	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+%	copies of the Software, and to permit persons to whom the Software is
+%	furnished to do so, subject to the following conditions:
+%
+%	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+%	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+%	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+%	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+%	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+%	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+%	THE SOFTWARE.
+%
+%-----------------------------------------------------------------------------------------------------------------------------------------------%
+
+% One-page version: Education, Awards, Work Experience and Publications only.
+
+\documentclass[a4paper,10pt]{article}
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES
+%----------------------------------------------------------------------------------------
+\usepackage[a4paper,top=1.3cm,bottom=1.3cm,left=1.5cm,right=1.5cm]{geometry}
+\usepackage{parskip}
+\usepackage[usenames,dvipsnames]{xcolor}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{academicons}
+\usepackage{fontawesome5}
+\usepackage[unicode, draft=false]{hyperref}
+
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+
+% section headings
+\titleformat{\section}{\large\scshape\raggedright}{}{0em}{}[\titlerule]
+\titlespacing{\section}{0pt}{8pt}{5pt}
+
+% links
+\definecolor{linkcolour}{rgb}{0,0.2,0.6}
+\hypersetup{colorlinks,breaklinks,urlcolor=linkcolour,linkcolor=linkcolour}
+
+% compact square bullets
+\newcommand{\localtextbulletone}{\textcolor{black}{\raisebox{.45ex}{\rule{.5ex}{.5ex}}}}
+\renewcommand{\labelitemi}{\localtextbulletone}
+\setlist[itemize]{leftmargin=1.2em, itemsep=0pt, parsep=0pt, topsep=0pt, partopsep=0pt}
+
+% \entry{title}{right-hand text}{description}
+\newcommand{\entry}[3]{%
+  \textbf{#1} \hfill #2 \\[1pt]
+  #3\par\vspace{5pt}}
+
+%----------------------------------------------------------------------------------------
+%	BEGIN DOCUMENT
+%----------------------------------------------------------------------------------------
+\begin{document}
+\pagestyle{empty}
+
+%----------------------------------------------------------------------------------------
+%	TITLE
+%----------------------------------------------------------------------------------------
+\begin{tabularx}{\linewidth}{@{} C @{}}
+\Huge{Tejas Kumar} \\[2pt]
+\small CSE Graduate from Indian Institute of Technology Delhi \\[2pt]
+\small
+\href{https://github.com/TejasKumar3005}{\raisebox{-0.05\height}\faGithub\ TejasKumar3005} \ $|$ \
+\href{mailto:tejaskumar.iitd@gmail.com}{\raisebox{-0.05\height}\faEnvelope\ tejaskumar.iitd@gmail.com} \ $|$ \
+\href{tel:+917357320144}{\raisebox{-0.05\height}\faMobile\ +91 7357320144} \ $|$ \
+\href{https://www.researchgate.net/profile/Tejas-Kumar-10}{\raisebox{-0.05\height}\aiResearchGate\ ResearchGate} \\
+\end{tabularx}
+
+%----------------------------------------------------------------------------------------
+%	EDUCATION
+%----------------------------------------------------------------------------------------
+\section{Education}
+\begin{tabularx}{\linewidth}{@{}l X@{}}
+2025 & B.Tech in Computer Science, \textbf{Indian Institute of Technology Delhi} \hfill (GPA: 9.05/10) \\
+2021 & Class 12th, Central Board of Secondary Education \hfill (98/100) \\
+2019 & Class 10th, Central Board of Secondary Education \hfill (97.2/100) \\
+\end{tabularx}
+
+%----------------------------------------------------------------------------------------
+%	AWARDS
+%----------------------------------------------------------------------------------------
+\section{Awards and Achievements}
+\begin{itemize}
+    \item \textbf{All India Rank 88} in \textbf{JEE Advanced 2021} among 1 million students.
+    \item \textbf{KVPY AIR 12} (2021) and \textbf{AIR 36} (2020) among 500,000 students.
+    \item \textbf{Best Paper Award, World Water Summit 2020} for a novel algorithm optimising the cost of community-level groundwater recharge.
+    \item \textbf{Top 10} innovative ideas in \textbf{Samsung Solve for Tomorrow 2022} among \textbf{18,000} teams.
+    \item \textbf{1st Prize, Innov8 Hackathon} by Eightfold AI for AI-based fraudulent resume detection.
+    \item \textbf{International Rank 1, Physics Brawl} (Institute of Theoretical Physics, MFF UK); \textbf{Gold}, Online Physics Olympiad by Jane Street.
+    \item \textbf{Gold medallist, International Earth Science Olympiad}, Daegu, South Korea; selected for the \textbf{Indian team at IOAA 2020}.
+    \item \textbf{NTSE Scholar 2019}; \textbf{top 35} in India for \textbf{IJSO 2018} (OCSC); \textbf{NMTC AIR 18}.
+    \item \textbf{Black belt in Karate} with a \textbf{National Gold medal} and several State and District medals.
+\end{itemize}
+
+%----------------------------------------------------------------------------------------
+%	EXPERIENCE
+%----------------------------------------------------------------------------------------
+\section{Work Experience}
+
+\entry{Founder \& CEO, Svar AI}{March 2024 -- September 2025}{%
+Developed a \textbf{multi-head self-attention transformer model} that generates Python query-fetch code from English commands, \textbf{automating the CRM process}. Applied \textbf{NLP} techniques to translate natural language into code and \textbf{improved CRM efficiency} through automation.}
+
+\entry{AI Developer, Floworks.ai}{November 2022 -- June 2023}{%
+\textbf{Fine-tuned an LLM} to generate Python query-fetch code from English commands, \textbf{automating CRM commands} and improving the efficiency of the CRM system.}
+
+\entry{Research and Development Intern, Avaz Inc., Palo Alto, California}{July 2022 -- August 2022}{%
+\textbf{Analyzed data and automated the n-gram pipeline} of the \textbf{next-word prediction} AAC keyboard and \textbf{ideated a novel word prediction model}. Built an accessible \textbf{Flutter} app interface for people with motor disabilities.}
+
+%----------------------------------------------------------------------------------------
+%	PUBLICATIONS
+%----------------------------------------------------------------------------------------
+\section{Publications}
+
+\entry{Assessing the Carbon Footprint of an Ayurveda Medical Institute}{\href{https://doi.org/10.1007/978-981-16-5281-3_4}{Link to paper}}{%
+Case study of the National Institute of Ayurveda, Jaipur, published in \textit{Recent Advances in Industrial Production}, Lecture Notes in Mechanical Engineering, \textbf{Springer, Singapore}; presented at the \textbf{International Conference on Evolution in Manufacturing 2020}. Proposed solutions to \textbf{cut emissions by 430 tonnes of CO\textsubscript{2} per annum}.}
+
+\entry{Retrograde Motion: The Derivation of Formula}{\href{https://insa.nic.in/writereaddata/UpLoadedFiles/IJHS/Vol55_4_2020__Art08.pdf}{Link to paper}}{%
+\textbf{A new derivation} of a formula explaining the retrograde motion of planets in \textbf{Astronomy}, under the guidance of \textbf{Dr. B. S. Shylaja, Director, Jawaharlal Nehru Planetarium, Bangalore}.}
+
+\entry{Novel Mathematical Algorithm for Optimising Cost of Aquifer Rejuvenation}{\href{https://www.researchgate.net/publication/380000939_Novel_mathematical_model_for_optimizing_the_cost_of_aquifer_rejuvenation_via_community-level_groundwater_recharge}{Link to paper}}{%
+\textbf{Built a multi-input algorithm} that \textbf{reduces the overall cost} of a community-level rainwater harvesting system \textbf{by almost 40\%}. Won the \textbf{Best Paper Award at World Water Summit 2020}.}
+
+\entry{New Set of Derivations for the General Axis Theorem of Moment of Inertia}{\href{https://www.researchgate.net/publication/380000942_New_set_of_derivation_for_general_axis_theorem_for_moment_of_Inertia}{Link to paper}}{%
+A general axis theorem in \textbf{Physics} that computes the moment of inertia about any axis given any 3 non-planar moments of inertia of the object.}
+
+\end{document}
