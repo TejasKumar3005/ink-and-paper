@@ -27,8 +27,11 @@ export const site = {
   locale: 'en',
 
   intro: {
+    /** The italic line under the name. */
+    role: 'Computer scientist. IIT Delhi.',
+
     body: [
-      'I am a computer scientist at IIT Delhi, building TheAgentNet — so businesses can sell to AI agents the way they already sell to people.',
+      'I build TheAgentNet, so businesses can sell to AI agents the way they already sell to people.',
     ],
 
     /** The story-lane photograph pinned beside the introduction (its file name). */
@@ -49,8 +52,8 @@ export const site = {
 
   nav: [
     { label: 'Home', href: '/' },
-    { label: 'Story lane', href: '/story/' },
     { label: 'Writing', href: '/writing/' },
+    { label: 'Story lane', href: '/story/' },
     { label: 'Contact', href: '/contact/' },
   ],
 

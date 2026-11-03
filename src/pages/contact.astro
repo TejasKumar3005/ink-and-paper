@@ -1,25 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
-import InkHeading from '../components/InkHeading.astro';
 import { site } from '../site.config';
 ---
 
 <Base title="Contact" description={`How to reach ${site.name}.`}>
-  <div class="shell shell--narrow page-top page-bottom contact">
-    <InkHeading as="h1">Contact</InkHeading>
+  <div class="folio page-bottom">
+    <header>
+      <h1 class="title">Contact</h1>
+      <p class="subtitle">{site.contactNote}</p>
+    </header>
 
-    <p class="contact__note">{site.contactNote}</p>
+    <p class="contact__email">
+      <a href={`mailto:${site.email}`}>{site.email}</a>
+    </p>
 
-    <a
-      class="ink-link contact__email"
-      href={`mailto:${site.email}`}
-      data-reveal
-      style="--reveal-delay:80ms"
-    >
-      {site.email}
-    </a>
-
-    <ul class="link-list" role="list" data-reveal style="--reveal-delay:120ms">
+    <ul class="link-list" role="list">
       {
         site.links.map((link) => (
           <li>
@@ -35,8 +30,9 @@ import { site } from '../site.config';
 </Base>
 
 <style>
-  .contact {
-    padding-block-start: var(--space-l);
+  .contact__email {
+    margin-block-start: var(--space-l);
+    font-size: var(--step-1);
+    overflow-wrap: anywhere;
   }
-
 </style>

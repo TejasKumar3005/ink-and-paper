@@ -2,7 +2,6 @@
 import { Image } from 'astro:assets';
 import { render } from 'astro:content';
 import Base from '../layouts/Base.astro';
-import InkHeading from '../components/InkHeading.astro';
 import { site } from '../site.config';
 import { formatDate, getStory, isoDate } from '../lib/content';
 
@@ -25,7 +24,7 @@ const lane = await Promise.all(
 >
   <section class="shell lane" data-lane aria-label="Story lane" aria-roledescription="carousel">
     <header class="lane__head">
-      <InkHeading as="h1" class="lane__title">Story lane</InkHeading>
+      <h1 class="lane__title ink-heading">Story lane</h1>
       <p class="lane__count meta" data-lane-count aria-live="polite" aria-atomic="true">
         <span data-lane-current>01</span> / {String(total).padStart(2, '0')}
       </p>
@@ -100,7 +99,8 @@ const lane = await Promise.all(
 
 <style>
   .shell {
-    --content-width: 68rem;
+    /* The full page grid: picture margin, text column, notes column. */
+    --content-width: calc(69rem + 2 * var(--gutter));
     flex: 1;
     min-height: 0;
     display: flex;

@@ -9,17 +9,7 @@ const isCurrent = (href: string) =>
 ---
 
 <header class="masthead">
-  <div class="shell masthead__inner">
-    <p>
-      <a
-        class:list={['masthead__name', path === home && 'masthead__name--home']}
-        href={home}
-        rel="home"
-        aria-hidden={path === home ? 'true' : undefined}
-        tabindex={path === home ? -1 : undefined}>{site.name}</a
-      >
-    </p>
-
+  <div class="folio">
     <nav class="nav" aria-label="Primary">
       <ul>
         {

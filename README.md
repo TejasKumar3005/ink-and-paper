@@ -204,23 +204,24 @@ ever want a dark palette, it is a second `:root` block under
 `@media (prefers-color-scheme: dark)` re-declaring the same token names — no
 other file needs to change.
 
-Type is set in a system serif stack with a monospace for dates and captions,
-so there are no webfonts to download and no layout shift while they arrive. If
-you would rather self-host a serif, Astro's `fonts` config is the place.
+The page is laid out like a book: a left margin for a picture, a text column
+of about 65 characters, and a right margin for notes. Type is EB Garamond,
+self-hosted from `public/fonts/` (SIL Open Font License, `public/fonts/OFL.txt`).
+These are the full builds of the font, subset to Latin, so the real small caps
+(`font-variant-caps: small-caps`) and old-style figures work; the copies Google
+Fonts serves have both stripped. One red, for drop caps and note numbers, is
+the only colour outside the photographs.
 
 ### The motion
 
-Every animation is in `motion.css` and is meant to read as ink: a drop that
-splashes across the viewport between pages, a brush stroke that draws itself
-under headings, text that fades up out of a soft blur, photographs that
-develop from desaturated and soft to clear.
+Every animation is in `motion.css`: an ink drop that splashes across the
+viewport between pages, and short fades as text and photographs come into
+view.
 
 The page transition is [CodyHouse's ink-drop sprite](https://codyhouse.co/gem/ink-transition-effect/)
 — the same PNG-sequence-plus-`steps()` technique used on Sevenhills — not a
 live SVG filter. Each click lands the drop somewhere new: a random point,
 flip, and a little turn, scaled so the last frame still covers the page.
-The heading strokes and dividers still use the `feTurbulence` /
-`feDisplacementMap` filters in `src/components/InkDefs.astro`.
 
 All of it is disabled under `prefers-reduced-motion: reduce`, which falls back
 to instant, static states. If you turn that setting on in your OS, the site

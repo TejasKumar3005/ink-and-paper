@@ -2,7 +2,6 @@
 import type { GetStaticPaths } from 'astro';
 import { render } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import InkDivider from '../../components/InkDivider.astro';
 import {
   formatDate,
   getArticles,
@@ -41,9 +40,9 @@ const minutes = readingTime(entry.body);
   type="article"
   publishedTime={entry.data.date}
 >
-  <article class="shell shell--narrow page-top page-bottom">
+  <article class="folio page-bottom">
     <header class="article__header">
-      <p class="meta">
+      <p class="article__back meta">
         <a href={url('/writing/')}>← Writing</a>
       </p>
       <h1 class="article__title">{entry.data.title}</h1>
@@ -55,39 +54,28 @@ const minutes = readingTime(entry.body);
       </ul>
     </header>
 
-    <div class="prose prose--dropcap" data-reveal>
+    <div class="prose prose--dropcap">
       <Content />
     </div>
 
-    <InkDivider />
-
-    <nav class="article__footer meta meta--plain" aria-label="More writing">
-      {
-        previous ? (
-          <a class="ink-link" rel="prev" href={url(`/writing/${previous.id}/`)}>
-            ← {previous.data.title}
-          </a>
-        ) : (
-          <span />
-        )
-      }
-      {
-        next && (
-          <a class="ink-link" rel="next" href={url(`/writing/${next.id}/`)}>
-            {next.data.title} →
-          </a>
-        )
-      }
-    </nav>
+    {
+      (previous || next) && (
+        <nav class="article__footer meta" aria-label="More writing">
+          {previous ? (
+            <a rel="prev" href={url(`/writing/${previous.id}/`)}>
+              ← {previous.data.title}
+            </a>
+          ) : (
+            <span />
+          )}
+          {next && (
+            <a rel="next" href={url(`/writing/${next.id}/`)}>
+              {next.data.title} →
+            </a>
+          )}
+        </nav>
+      )
+    }
   </article>
 </Base>
 
-<style>
-  .article__header {
-    padding-block: var(--space-l) var(--space-xl);
-  }
-
-  .prose {
-    margin-block-start: var(--space-l);
-  }
-</style>

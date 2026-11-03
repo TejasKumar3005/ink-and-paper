@@ -1,17 +1,12 @@
 ---
 import { Image } from 'astro:assets';
 import Base from '../layouts/Base.astro';
-import InkHeading from '../components/InkHeading.astro';
-import InkDivider from '../components/InkDivider.astro';
+import EssayEntry from '../components/EssayEntry.astro';
 import { site } from '../site.config';
 import { url } from '../lib/url';
-import { getArticles, getStory, readingTime } from '../lib/content';
+import { getArticles, getStory } from '../lib/content';
 
 const [articles, story] = await Promise.all([getArticles(), getStory()]);
-const latest = articles[0];
-const firstPhoto = story[0];
-const portrait =
-  story.find((entry) => entry.id === site.intro.portrait) ?? story[story.length - 1];
 
 /** A photograph of me, if one is dropped in at src/assets/portrait.(jpg|png|webp). */
 const [headshot] = Object.values(
@@ -22,132 +17,59 @@ const [headshot] = Object.values(
 ---
 
 <Base title={site.name} description={site.description}>
-  <div class="shell page-top home">
-    <section class="intro" aria-labelledby="intro-heading">
-      <div class="intro__text">
-        <h1 id="intro-heading" class="lede">{site.name}</h1>
+  <div class="folio page-bottom home">
+    {
+      headshot && (
+        <figure class="folio__margin margin-figure">
+          <Image
+            src={headshot}
+            alt={`${site.name}, smiling, in a grey turtleneck on a hillside with cloud and pine forest behind`}
+            widths={[120, 240, 360]}
+            sizes="7rem"
+            loading="eager"
+            fetchpriority="high"
+            quality={80}
+          />
+        </figure>
+      )
+    }
 
-        <div class="intro__body" data-reveal style="--reveal-delay:180ms">
-          {site.intro.body.map((paragraph) => <p>{paragraph}</p>)}
-        </div>
-      </div>
+    <header class="home__head">
+      <h1 class="title">{site.name}</h1>
+      <p class="subtitle">{site.intro.role}</p>
+    </header>
 
+    {
+      site.intro.body.map((paragraph, index) => (
+        <p class:list={['home__intro', 'justify', index === 0 && 'dropcap']}>{paragraph}</p>
+      ))
+    }
+
+    <h2 class="section-label" id="writing">Writing</h2>
+    <div class="folio__wide">
+      {articles.map((entry, index) => <EssayEntry entry={entry} note={index + 1} />)}
+    </div>
+
+    <h2 class="section-label" id="story">Story lane</h2>
+    <ul class="fleurons">
       {
-        headshot ? (
-          <figure class="print print--portrait" data-develop>
-            <span class="print__frame">
-              <Image
-                src={headshot}
-                alt={`${site.name}, smiling, in a grey turtleneck on a hillside with cloud and pine forest behind`}
-                widths={[360, 540, 720]}
-                sizes="(min-width: 56rem) 20rem, 70vw"
-                loading="eager"
-                fetchpriority="high"
-                quality={78}
-              />
-            </span>
-          </figure>
-        ) : portrait && (
-          <a
-            class="print"
-            href={url(`/story/#${portrait.id}`)}
-            data-develop
-            aria-label={`From the story lane: ${portrait.data.title}`}
-          >
-            <Image
-              src={portrait.data.image}
-              alt={portrait.data.alt}
-              widths={[360, 540, 720]}
-              sizes="(min-width: 56rem) 22rem, 70vw"
-              loading="eager"
-              fetchpriority="high"
-              quality={72}
-            />
-            <span class="print__caption">{portrait.data.title}</span>
-          </a>
-        )
+        story.map((entry) => (
+          <li>
+            <a href={url(`/story/#${entry.id}`)}>{entry.data.title}</a>
+            <span class="meta"> ({entry.data.date.getUTCFullYear()})</span>
+          </li>
+        ))
       }
-    </section>
-
-    <InkDivider />
-
-    <section aria-labelledby="onward-heading">
-      <InkHeading as="h2" id="onward-heading" class="section-label">Start here</InkHeading>
-
-      <div class="onward">
-        {
-          latest && (
-            <a class="onward__item" href={url(`/writing/${latest.id}/`)} data-reveal>
-              {latest.data.cover && (
-                <span class="onward__media">
-                  <Image
-                    src={latest.data.cover}
-                    alt=""
-                    widths={[420, 680, 900]}
-                    sizes="(min-width: 56rem) 30rem, 100vw"
-                    quality={72}
-                  />
-                </span>
-              )}
-              <span class="meta">
-                Latest essay · {readingTime(latest.body)} min
-              </span>
-              <h3 class="onward__title">{latest.data.title}</h3>
-            </a>
-          )
-        }
-
-        {
-          firstPhoto && (
-            <a
-              class="onward__item"
-              href={url('/story/')}
-              data-reveal
-              style="--reveal-delay:140ms"
-            >
-              <span class="onward__media">
-                <Image
-                  src={firstPhoto.data.image}
-                  alt=""
-                  widths={[420, 680, 900]}
-                  sizes="(min-width: 56rem) 30rem, 100vw"
-                  quality={72}
-                />
-              </span>
-              <span class="meta">Story lane · {story.length} photos</span>
-              <h3 class="onward__title">{firstPhoto.data.title}</h3>
-            </a>
-          )
-        }
-      </div>
-
-    </section>
+    </ul>
   </div>
 </Base>
 
 <style>
-  .intro {
-    display: grid;
-    gap: var(--space-xl);
-    padding-block: var(--space-l) var(--space-xl);
+  .home__head {
+    margin-block-end: var(--space-m);
   }
 
-  .intro__body {
-    margin-block-start: var(--space-xl);
+  .home__intro + .home__intro {
+    margin-block-start: 0.85em;
   }
-
-  @media (min-width: 56rem) {
-    .intro {
-      grid-template-columns: minmax(0, 1fr) 20rem;
-      gap: var(--space-2xl);
-      align-items: center;
-      padding-block: var(--space-l) var(--space-xl);
-    }
-
-    .intro__body {
-      margin-block-start: var(--space-l);
-    }
-  }
-
-
 </style>

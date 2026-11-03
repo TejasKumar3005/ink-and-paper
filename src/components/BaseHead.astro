@@ -36,6 +36,13 @@ const fullTitle = title === site.name ? title : `${title} — ${site.name}`;
 <link rel="canonical" href={canonical} />
 
 <link rel="preload" href={url('/ink-splash.png')} as="image" />
+<link
+  rel="preload"
+  href={url('/fonts/eb-garamond-400.woff2')}
+  as="font"
+  type="font/woff2"
+  crossorigin
+/>
 <link rel="icon" href={url('/favicon.svg')} type="image/svg+xml" />
 <link rel="apple-touch-icon" href={url('/apple-touch-icon.png')} />
 <link rel="sitemap" href={url('/sitemap-index.xml')} />
@@ -46,7 +53,7 @@ const fullTitle = title === site.name ? title : `${title} — ${site.name}`;
   href={new URL(feed, origin)}
 />
 
-<meta name="theme-color" content="#faf8f4" />
+<meta name="theme-color" content="#ffffff" />
 
 <meta property="og:type" content={type} />
 <meta property="og:title" content={fullTitle} />

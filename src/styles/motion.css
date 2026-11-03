@@ -1,6 +1,5 @@
 /* ==========================================================================
-   Motion: ink behaving like ink.
-   Slow, organic, liquid-settling. Everything here is opt-out under
+   Motion: quiet fades, and the ink drop between pages. Everything here is opt-out under
    `prefers-reduced-motion: reduce` — see the bottom of the file.
 
    Only opacity, transform and filter are animated.
@@ -8,41 +7,32 @@
 
 @layer motion {
   /* ------------------------------------------------------------------------
-     Scroll reveals — fade up with a blur that resolves.
+     Scroll reveals — a short, quiet fade up.
      Initial states are gated on `.js`, so the page is fully readable when
      JavaScript never arrives.
      ---------------------------------------------------------------------- */
   .js [data-reveal] {
     opacity: 0;
-    transform: translate3d(0, 20px, 0);
-    filter: blur(6px);
+    transform: translate3d(0, 8px, 0);
   }
 
   .js [data-reveal].is-revealed {
     opacity: 1;
     transform: none;
-    filter: blur(0);
     transition: opacity var(--dur-reveal) var(--ease-ink) var(--reveal-delay, 0ms),
-      transform var(--dur-reveal) var(--ease-ink) var(--reveal-delay, 0ms),
-      filter var(--dur-reveal) var(--ease-ink) var(--reveal-delay, 0ms);
+      transform var(--dur-reveal) var(--ease-ink) var(--reveal-delay, 0ms);
   }
 
   /* ------------------------------------------------------------------------
-     Photographs develop: desaturated and soft, resolving to full clarity.
+     Photographs fade in once they are on screen.
      ---------------------------------------------------------------------- */
   .js [data-develop] img {
-    opacity: 0.86;
-    transform: scale(1.014);
-    filter: saturate(0.3) contrast(0.94) blur(7px);
+    opacity: 0;
   }
 
   .js [data-develop].is-developed img {
     opacity: 1;
-    transform: none;
-    filter: saturate(1) contrast(1) blur(0);
-    transition: opacity var(--dur-develop) var(--ease-wash),
-      transform var(--dur-develop) var(--ease-wash),
-      filter var(--dur-develop) var(--ease-wash);
+    transition: opacity var(--dur-develop) var(--ease-wash);
   }
 
   /* ------------------------------------------------------------------------
@@ -76,83 +66,6 @@
 
   html.is-lane .lane__dot[aria-current='true'] {
     transform: scale(1.28);
-  }
-
-  /* ------------------------------------------------------------------------
-     Headings: a brush stroke that draws itself in.
-     The path is hand-drawn-irregular; the filter roughens it further.
-     ---------------------------------------------------------------------- */
-  .ink-heading {
-    position: relative;
-    width: fit-content;
-    max-width: 100%;
-  }
-
-  .ink-heading__stroke {
-    display: block;
-    width: calc(100% + 0.5em);
-    margin-inline-start: -0.25em;
-    height: 0.58em;
-    margin-block-start: 0.1em;
-    overflow: visible;
-    color: var(--accent);
-  }
-
-  .ink-heading__stroke path {
-    fill: none;
-    stroke: currentColor;
-    stroke-width: 2.4;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0.85;
-    filter: url(#ink-rough);
-  }
-
-  .js .ink-heading__stroke path {
-    stroke-dasharray: 1;
-    stroke-dashoffset: 1;
-  }
-
-  .js .ink-heading.is-inked .ink-heading__stroke path {
-    stroke-dashoffset: 0;
-    transition: stroke-dashoffset var(--dur-stroke) var(--ease-wash)
-      var(--reveal-delay, 0ms);
-  }
-
-  /* ------------------------------------------------------------------------
-     A faint ink blot blooming behind the accent word of the intro.
-     ---------------------------------------------------------------------- */
-  .lede {
-    position: relative;
-    z-index: 0;
-  }
-
-  .lede .accent::before {
-    content: '';
-    position: absolute;
-    inset: -0.3em -0.62em -0.2em;
-    z-index: -1;
-    background: var(--accent);
-    opacity: 0.14;
-    border-radius: 58% 42% 63% 37% / 47% 58% 42% 53%;
-    filter: url(#ink-blot) blur(7px);
-  }
-
-  .js .lede .accent::before {
-    opacity: 0;
-    transform: scale(0.55);
-    animation: blot-bloom 2600ms var(--ease-wash) 500ms forwards;
-  }
-
-  @keyframes blot-bloom {
-    from {
-      opacity: 0;
-      transform: scale(0.55);
-    }
-    to {
-      opacity: 0.14;
-      transform: scale(1);
-    }
   }
 
   /* ------------------------------------------------------------------------
@@ -279,18 +192,7 @@
       transition: none !important;
     }
 
-    .js .ink-heading__stroke path,
-    .js .ink-heading.is-inked .ink-heading__stroke path {
-      stroke-dasharray: none !important;
-      stroke-dashoffset: 0 !important;
-      transition: none !important;
-    }
 
-    .js .lede .accent::before {
-      opacity: 0.14;
-      transform: none;
-      animation: none !important;
-    }
 
     .ink-splash {
       display: none !important;
@@ -305,7 +207,6 @@
 
     .js .ink-link,
     .js .ink-link::before,
-    .onward__title,
     .link-list a,
     .skip-link {
       transition: none !important;

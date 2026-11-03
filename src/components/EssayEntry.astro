@@ -1,0 +1,30 @@
+---
+/**
+ * One essay as a line of the contents: title and summary in the text
+ * column, with a numbered note in the margin giving its length and date.
+ */
+import { url } from '../lib/url';
+import { formatDate, isoDate, readingTime, type WritingEntry } from '../lib/content';
+
+interface Props {
+  entry: WritingEntry;
+  /** The note number, counted down the page. */
+  note: number;
+}
+
+const { entry, note } = Astro.props;
+const minutes = readingTime(entry.body);
+---
+
+<div class="entry" data-reveal>
+  <p class="entry__text">
+    <a href={url(`/writing/${entry.id}/`)}>{entry.data.title}.</a>{' '}
+    {entry.data.description}<sup class="note-ref">{note}</sup>
+  </p>
+  <aside class="sidenote">
+    <span class="sidenote__figure">{minutes} min</span>
+    <sup class="note-ref">{note}</sup>Published <time datetime={isoDate(entry.data.date)}
+      >{formatDate(entry.data.date)}</time
+    >, first on X.
+  </aside>
+</div>

@@ -1,8 +1,42 @@
 /* ==========================================================================
-   Ink & Paper
-   A single visual system: warm paper, deep ink, one muted indigo accent.
-   Photographs are the only place saturated colour is allowed to appear.
+   Tejas Kumar — a book page.
+   One serif (EB Garamond, with its real small caps and old-style figures),
+   black on white, one red for the drop cap and note numbers. A main column
+   of about 65 characters, a left margin for a picture, a right margin for
+   notes. Photographs are the only other colour.
    ========================================================================== */
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/eb-garamond-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/eb-garamond-400-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/eb-garamond-600.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'EB Garamond';
+  src: url('/fonts/eb-garamond-600-italic.woff2') format('woff2');
+  font-weight: 600;
+  font-style: italic;
+  font-display: swap;
+}
 
 @layer reset, tokens, base, layout, components, motion, utilities;
 
@@ -53,101 +87,80 @@
    -------------------------------------------------------------------------- */
 @layer tokens {
   :root {
-    /* Light only, deliberately. `only light` also stops the browser from
-       auto-darkening form controls and scrollbars on a dark-set OS. */
     color-scheme: only light;
 
-    /* Paper & ink */
-    --paper: #faf8f4;
-    --paper-sunk: #f2eee5;
-    --paper-raised: #fdfcfa;
-    --ink: #1a1a18;
-    /* Both carry small type, so both clear 4.5:1 against the paper. */
-    --ink-muted: color-mix(in oklab, var(--ink) 74%, var(--paper));
-    --ink-faint: color-mix(in oklab, var(--ink) 60%, var(--paper));
-    --rule: color-mix(in oklab, var(--ink) 16%, var(--paper));
-    --rule-strong: color-mix(in oklab, var(--ink) 30%, var(--paper));
+    --paper: #ffffff;
+    --paper-sunk: #f4f3ef;
+    --paper-raised: #ffffff;
+    --ink: #141414;
+    /* Both clear 4.5:1 on white; they carry notes and captions. */
+    --ink-muted: #4d4d4d;
+    --ink-faint: #6b6b6b;
+    --rule: #141414;
+    --rule-soft: #dcdcd8;
+    --rule-strong: #8c8c8c;
 
-    /* The one accent: a faded indigo. Nothing else gets a hue. */
-    --accent: #454a7d;
-    --accent-soft: color-mix(in oklab, var(--accent) 22%, var(--paper));
-    --accent-ink: color-mix(in oklab, var(--accent) 78%, var(--ink));
+    /* The one colour: a rubricator's red. Drop caps and note numbers. */
+    --accent: #b5311f;
+    --accent-soft: #f3dcd8;
+    --accent-ink: #8f2617;
 
-    --grain-opacity: 0.05;
-    --grain-blend: multiply;
-    /* Paper fibre: one tiling patch of fractal noise, desaturated. */
-    --grain-url: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.86' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23g)'/%3E%3C/svg%3E");
-    --photo-shadow: 0 1px 2px color-mix(in oklab, var(--ink) 8%, transparent),
-      0 18px 48px -28px color-mix(in oklab, var(--ink) 40%, transparent);
+    --photo-shadow: none;
 
-    /* Type */
-    --font-serif: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua',
-      'Hoefler Text', 'Source Serif 4', Georgia, 'Times New Roman', Times, serif;
-    --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, 'JetBrains Mono', Menlo,
-      Consolas, 'Liberation Mono', monospace;
+    --font-serif: 'EB Garamond', Garamond, 'Iowan Old Style', 'Palatino Linotype',
+      Palatino, Georgia, 'Times New Roman', serif;
 
-    /* A slow, even scale. Everything steps from here. */
-    --step--1: clamp(0.78rem, 0.76rem + 0.1vw, 0.84rem);
-    --step-0: clamp(1.05rem, 1rem + 0.25vw, 1.2rem);
-    --step-1: clamp(1.26rem, 1.16rem + 0.5vw, 1.55rem);
-    --step-2: clamp(1.5rem, 1.32rem + 0.9vw, 2.1rem);
-    --step-3: clamp(1.85rem, 1.5rem + 1.7vw, 3rem);
-    --step-4: clamp(2.3rem, 1.6rem + 3.3vw, 4.6rem);
+    /* Phone. */
+    --step--1: 0.9rem;
+    --step-0: 1.15rem;
+    --step-1: 1.3rem;
+    --step-2: 1.5rem;
+    --step-3: 1.85rem;
+    --step-4: 2.15rem;
 
-    --measure: 65ch;
-    --leading: 1.72;
+    --measure: 40rem;
+    --leading: 1.55;
 
-    /* Space — whitespace is the design. Be brave with it. */
     --space-3xs: 0.25rem;
     --space-2xs: 0.5rem;
     --space-xs: 0.75rem;
     --space-s: 1rem;
     --space-m: 1.5rem;
-    --space-l: 2.5rem;
-    --space-xl: clamp(3rem, 6vw, 5rem);
-    --space-2xl: clamp(4.5rem, 11vw, 9rem);
-    --space-3xl: clamp(6rem, 17vw, 14rem);
+    --space-l: 2.25rem;
+    --space-xl: 3.25rem;
+    --space-2xl: 4.5rem;
+    --space-3xl: 6rem;
 
-    --gutter: clamp(1.25rem, 5vw, 3.5rem);
-    --content-width: 72rem;
+    --gutter: 1rem;
+    --content-width: 74rem;
 
-    /* Motion — liquid settling, never bouncy. */
+    /* The nav bar's height, so the home picture can sit level with it. */
+    --nav-h: 2.75rem;
+    --masthead-gap: 2.75rem;
+
     --ease-ink: cubic-bezier(0.16, 0.68, 0.24, 1);
     --ease-wash: cubic-bezier(0.32, 0.12, 0.2, 1);
-    --dur-reveal: 900ms;
-    --dur-stroke: 1100ms;
-    --dur-develop: 1500ms;
+    --dur-reveal: 700ms;
+    --dur-develop: 900ms;
     --dur-slide: 640ms;
     --dur-splash-in: 800ms;
     --dur-splash-fade: 700ms;
   }
 
-  /* Computer: a tighter editorial measure. Phone keeps the roomier scale. */
-  @media (min-width: 56rem) {
+  /* Computer: the reference measure — 21px text, 44px name. */
+  @media (min-width: 60rem) {
     :root {
-      --step--1: 0.7rem;
-      --step-0: 1rem;
-      --step-1: 1.15rem;
-      --step-2: 1.38rem;
-      --step-3: 1.85rem;
-      --step-4: 2.4rem;
-
-      --leading: 1.58;
-      --measure: 60ch;
-
-      --space-xs: 0.6rem;
-      --space-s: 0.85rem;
-      --space-m: 1.15rem;
-      --space-l: 1.65rem;
-      --space-xl: 2.25rem;
-      --space-2xl: 3.25rem;
-      --space-3xl: 4.75rem;
+      --step--1: 0.97rem;
+      --step-0: 1.3125rem;
+      --step-1: 1.5rem;
+      --step-2: 1.6875rem;
+      --step-3: 2.25rem;
+      --step-4: 2.75rem;
 
       --gutter: 2rem;
-      --content-width: 64rem;
+      --masthead-gap: 2.75rem;
     }
   }
-
 }
 
 /* --------------------------------------------------------------------------
@@ -156,7 +169,6 @@
 @layer base {
   html {
     background-color: var(--paper);
-    /* Scroll-driven reveals need a little breathing room under sticky headers. */
     scroll-padding-top: var(--space-l);
   }
 
@@ -174,24 +186,12 @@
     font-size: var(--step-0);
     line-height: var(--leading);
     font-kerning: normal;
-    font-synthesis-weight: none;
+    font-variant-numeric: oldstyle-nums proportional-nums;
+    font-feature-settings: 'liga', 'kern';
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     display: flex;
     flex-direction: column;
-  }
-
-  /* Paper fibre. Very low opacity, fixed so it never parallaxes. */
-  body::after {
-    content: '';
-    position: fixed;
-    inset: -50%;
-    z-index: 100;
-    pointer-events: none;
-    opacity: var(--grain-opacity);
-    mix-blend-mode: var(--grain-blend);
-    background-image: var(--grain-url);
-    background-size: 220px 220px;
   }
 
   h1,
@@ -199,8 +199,7 @@
   h3,
   h4 {
     font-weight: 400;
-    line-height: 1.12;
-    letter-spacing: -0.014em;
+    line-height: 1.15;
     text-wrap: balance;
   }
 
@@ -221,9 +220,16 @@
 
   a {
     color: inherit;
-    text-decoration-color: var(--rule-strong);
-    text-underline-offset: 0.22em;
-    text-decoration-thickness: from-font;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-decoration-color: color-mix(in srgb, var(--ink) 55%, transparent);
+    text-underline-offset: 0.16em;
+    transition: color 200ms ease, text-decoration-color 200ms ease;
+  }
+
+  a:hover {
+    color: var(--accent-ink);
+    text-decoration-color: currentColor;
   }
 
   strong {
@@ -236,8 +242,7 @@
 
   hr {
     border: 0;
-    height: 1px;
-    background: var(--rule);
+    border-block-start: 1px dotted var(--rule);
   }
 
   ::selection {
@@ -251,20 +256,22 @@
     border-radius: 1px;
   }
 
-  /* Small, letter-spaced monospace for dates, captions and metadata. */
+  /* Dates, captions, notes: small italic, set back in grey. */
   .meta {
-    font-family: var(--font-mono);
+    font-style: italic;
     font-size: var(--step--1);
-    letter-spacing: 0.09em;
-    text-transform: uppercase;
-    line-height: 1.5;
+    line-height: 1.45;
     color: var(--ink-faint);
-    font-variant-numeric: tabular-nums;
   }
 
   .meta--plain {
-    text-transform: none;
-    letter-spacing: 0.04em;
+    font-style: normal;
+  }
+
+  /* True small caps: capitals stay capitals, lowercase becomes small caps. */
+  .sc {
+    font-variant-caps: small-caps;
+    letter-spacing: 0.06em;
   }
 
   .skip-link {
@@ -272,13 +279,10 @@
     left: var(--space-s);
     top: var(--space-s);
     z-index: 200;
-    padding: 0.6em 1em;
-    background: var(--paper-raised);
+    padding: 0.4em 0.9em;
+    background: var(--paper);
     color: var(--ink);
-    border: 1px solid var(--rule-strong);
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    letter-spacing: 0.08em;
+    border: 1px solid var(--ink);
     text-decoration: none;
     transform: translateY(-160%);
     transition: transform 180ms var(--ease-ink);
@@ -312,16 +316,53 @@
     padding-inline: var(--gutter);
   }
 
-  .shell--narrow {
-    max-width: calc(var(--measure) + var(--gutter) * 2);
+  /*
+   * The page: a left margin for a picture, the text column, and a right
+   * margin for notes. On a phone it is one column and the margins fold in.
+   */
+  .folio {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    width: 100%;
+    max-width: var(--content-width);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  .folio > * {
+    grid-column: 1;
+    min-width: 0;
+  }
+
+  @media (min-width: 60rem) {
+    .folio {
+      grid-template-columns:
+        [margin] 7rem
+        [main] minmax(0, var(--measure))
+        [side] 15rem;
+      column-gap: 3.5rem;
+      justify-content: center;
+    }
+
+    .folio > * {
+      grid-column: main;
+    }
+
+    .folio > .folio__margin {
+      grid-column: margin;
+    }
+
+    /* Spans the text column and the notes column. */
+    .folio > .folio__wide {
+      grid-column: main / span 2;
+    }
   }
 
   main {
     flex: 1 0 auto;
   }
 
-  /* Story lane is a viewport, not a long scroll — even on first paint,
-     before ClientRouter has copied the `js` class across. */
+  /* Story lane is a viewport, not a long scroll. */
   html.is-lane,
   html.is-lane body {
     height: 100dvh;
@@ -348,24 +389,20 @@
   .prose {
     max-width: var(--measure);
   }
-
-  .stack > * + * {
-    margin-block-start: var(--flow, var(--space-m));
-  }
 }
 
 /* --------------------------------------------------------------------------
    Components
    -------------------------------------------------------------------------- */
 @layer components {
-  /* ---- Masthead ---------------------------------------------------------- */
+  /* ---- Masthead: a ruled bar of small-caps cells ------------------------- */
   .masthead {
-    padding-block: var(--space-l) var(--space-m);
+    padding-block: var(--space-m) var(--masthead-gap);
   }
 
-  @media (min-width: 56rem) {
+  @media (min-width: 60rem) {
     .masthead {
-      padding-block: var(--space-s) var(--space-xs);
+      padding-block-start: 3.5rem;
     }
   }
 
@@ -373,271 +410,245 @@
     padding-block: var(--space-s) var(--space-xs);
   }
 
-  .masthead__inner {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--space-s) var(--space-l);
+  .nav ul {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: var(--rule);
+    border: 1px solid var(--rule);
   }
 
-  .masthead__name {
-    font-size: var(--step-1);
-    letter-spacing: 0.004em;
-    text-decoration: none;
-  }
-
-  /* The home page leads with the name, so the header does not repeat it. */
-  .masthead__name--home {
-    visibility: hidden;
-  }
-
-  @media (max-width: 40rem) {
-    html.is-lane .masthead {
-      padding-block: var(--space-xs);
+  @media (min-width: 34rem) {
+    .nav ul {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
   }
 
-  .nav ul {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-s) var(--space-m);
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  .nav li {
+    background: var(--paper);
   }
 
   .nav a {
-    font-family: var(--font-mono);
-    font-size: var(--step--1);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--nav-h);
+    padding-inline: 0.5em;
+    font-size: var(--step-0);
+    font-variant-caps: small-caps;
+    letter-spacing: 0.08em;
+    line-height: 1;
     text-decoration: none;
-    color: var(--ink-muted);
+    color: var(--ink);
+    transition: background-color 200ms ease, color 200ms ease;
   }
 
-  .nav a[aria-current='page'] {
+  .nav a:hover {
+    background: var(--paper-sunk);
     color: var(--ink);
   }
 
-  .nav a[aria-current='page']::after {
-    content: '';
-    display: block;
-    height: 1px;
-    margin-block-start: 0.5em;
-    background: var(--accent);
-    opacity: 0.85;
+  .nav a[aria-current='page'] {
+    color: var(--accent);
   }
 
-  /* ---- Ink link: an underline that wets in, with a dot that spreads ------- */
+  /* ---- Ink link (kept as a class; now just a quiet underline) ----------- */
   .ink-link {
+    text-decoration-line: underline;
+  }
+
+  /* ---- Headings ---------------------------------------------------------- */
+  .ink-heading {
+    font-variant-caps: small-caps;
+    letter-spacing: 0.04em;
+  }
+
+  /* Section heads: small caps over a dotted rule. */
+  .section-label {
+    display: block;
+    font-size: var(--step-2);
+    font-variant-caps: small-caps;
+    letter-spacing: 0.06em;
+    padding-block-end: 0.15em;
+    margin-block: var(--space-xl) var(--space-s);
+    border-block-end: 1px dotted var(--rule);
+  }
+
+  /* ---- Page titles ------------------------------------------------------- */
+  .title {
+    font-size: var(--step-4);
+    font-variant-caps: small-caps;
+    letter-spacing: 0.03em;
+    line-height: 1.1;
+  }
+
+  .subtitle {
+    margin-block-start: 0.3em;
+    font-style: italic;
+    font-size: var(--step-1);
+    color: var(--ink-faint);
+  }
+
+  /* ---- Running text ------------------------------------------------------ */
+  .justify {
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+
+  /* A red drop cap, four lines deep. */
+  .dropcap::first-letter {
+    float: left;
+    font-size: 4.6em;
+    line-height: 0.8;
+    padding-inline-end: 0.06em;
+    margin-block: 0.06em -0.05em;
+    color: var(--accent);
+    font-style: normal;
+    font-feature-settings: 'swsh';
+  }
+
+  /* ---- Margin picture ---------------------------------------------------- */
+  .margin-figure {
+    margin: 0 0 var(--space-m);
+    width: 6rem;
+  }
+
+  .margin-figure img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    object-position: 50% 30%;
+  }
+
+  @media (min-width: 60rem) {
+    .margin-figure {
+      width: 100%;
+      margin: 0;
+      /* Level with the top of the nav bar. */
+      margin-block-start: calc(-1 * (var(--nav-h) + var(--masthead-gap) + 2px));
+    }
+  }
+
+  /* ---- Entries with sidenotes ------------------------------------------- */
+  .entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: var(--space-2xs);
+  }
+
+  .entry + .entry {
+    margin-block-start: var(--space-l);
+  }
+
+  @media (min-width: 60rem) {
+    .entry {
+      grid-template-columns: minmax(0, var(--measure)) 15rem;
+      column-gap: 3.5rem;
+      align-items: start;
+    }
+
+    .entry + .entry {
+      margin-block-start: var(--space-xl);
+    }
+  }
+
+  .entry__text a {
+    font-weight: 600;
+  }
+
+  /* Justified only where the measure is wide enough to take it. */
+  @media (min-width: 60rem) {
+    .entry__text {
+      text-align: justify;
+      hyphens: auto;
+      -webkit-hyphens: auto;
+    }
+  }
+
+  .note-ref {
+    font-size: 0.6em;
+    line-height: 0;
+    color: var(--accent);
+    vertical-align: super;
+    margin-inline-start: 0.08em;
+    font-variant-numeric: lining-nums;
+  }
+
+  .sidenote {
+    font-size: var(--step--1);
+    line-height: 1.45;
+    color: var(--ink-faint);
+    padding-inline-start: var(--space-s);
+    border-inline-start: 1px solid var(--rule-soft);
+  }
+
+  @media (min-width: 60rem) {
+    .sidenote {
+      padding: 0;
+      border: 0;
+      margin-block-start: 0.2em;
+    }
+  }
+
+  .sidenote__figure {
+    display: block;
+    font-size: var(--step-2);
+    line-height: 1.1;
+    color: var(--ink);
+    margin-block-end: 0.15em;
+  }
+
+  .sidenote .note-ref {
+    font-size: 0.75em;
+    margin: 0 0.25em 0 0;
+  }
+
+  /* ---- Lists with a fleuron --------------------------------------------- */
+  .fleurons {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .fleurons li {
     position: relative;
-    text-decoration: none;
-    color: inherit;
-    background-image: linear-gradient(var(--rule-strong), var(--rule-strong));
-    background-repeat: no-repeat;
-    background-position: 0 100%;
-    background-size: 100% 1px;
-    padding-block-end: 0.06em;
-    transition: background-size 520ms var(--ease-ink),
-      background-image 520ms var(--ease-ink), color 320ms var(--ease-ink);
+    padding-inline-start: 1.4em;
   }
 
-  .ink-link::before {
-    content: '';
+  .fleurons li + li {
+    margin-block-start: 0.35em;
+  }
+
+  .fleurons li::before {
+    content: '❧';
     position: absolute;
-    left: -0.16em;
-    bottom: -0.16em;
-    width: 0.42em;
-    height: 0.42em;
-    border-radius: 50%;
-    background: var(--accent);
-    opacity: 0;
-    transform: scale(0.2);
-    filter: blur(0.6px);
-    transition: transform 620ms var(--ease-ink), opacity 620ms var(--ease-ink);
-  }
-
-  .ink-link:hover,
-  .ink-link:focus-visible {
-    color: var(--accent-ink);
-    background-image: linear-gradient(var(--accent), var(--accent));
-  }
-
-  .ink-link:hover::before,
-  .ink-link:focus-visible::before {
-    opacity: 0.55;
-    transform: scale(1);
+    inset-inline-start: 0;
+    top: 0.05em;
+    color: var(--ink-faint);
+    font-size: 0.85em;
   }
 
   /* ---- Footer ------------------------------------------------------------ */
   .colophon {
-    padding-block: var(--space-l);
-    margin-block-start: var(--space-xl);
+    padding-block: var(--space-2xl) var(--space-xl);
   }
 
   .colophon__inner {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-s) var(--space-l);
-    justify-content: space-between;
-    align-items: baseline;
-    padding-block-start: var(--space-m);
+    padding-block-start: var(--space-s);
+    border-block-start: 1px solid var(--rule-soft);
   }
 
   .colophon a {
-    text-decoration: none;
+    text-decoration-color: color-mix(in srgb, var(--ink-faint) 60%, transparent);
   }
 
-  .colophon a:hover,
-  .colophon a:focus-visible {
-    color: var(--accent-ink);
-  }
-
-  /* ---- Section headings -------------------------------------------------- */
-  .section-label {
-    display: block;
-    margin-block-end: var(--space-m);
-  }
-
-  /* ---- Home -------------------------------------------------------------- */
-  .lede {
-    font-size: var(--step-4);
-    line-height: 1.12;
-    letter-spacing: -0.018em;
-    max-width: 22ch;
-    text-wrap: balance;
-    margin-block: var(--space-m) 0;
-  }
-
-  @media (min-width: 56rem) {
-    .lede {
-      font-size: clamp(2.6rem, 1.4rem + 2.4vw, 3.4rem);
-      line-height: 1.08;
-      letter-spacing: -0.024em;
-    }
-  }
-
-  .lede .accent {
-    position: relative;
-    color: var(--accent-ink);
-    white-space: nowrap;
-  }
-
-  .intro__body {
-    max-width: var(--measure);
-    font-size: var(--step-1);
-    line-height: 1.66;
-    color: var(--ink-muted);
-  }
-
-  .intro__body p + p {
-    margin-block-start: var(--space-m);
-  }
-
-
-
-  .onward {
-    display: grid;
-    gap: var(--space-l);
-    grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
-  }
-
-  .onward__item {
-    display: block;
-    text-decoration: none;
-  }
-
-  .onward__title {
-    font-size: var(--step-2);
-    margin-block: var(--space-2xs) var(--space-2xs);
-    transition: color 420ms var(--ease-ink);
-  }
-
-  .onward__item:hover .onward__title,
-  .onward__item:focus-visible .onward__title {
-    color: var(--accent-ink);
-  }
-
-
-
-  /* A cropped window onto the cover; it eases in a touch on hover. */
-  .onward__media {
-    display: block;
-    aspect-ratio: 16 / 9;
-    overflow: hidden;
-    margin-block: var(--space-2xs) var(--space-s);
-    background: var(--paper-sunk);
-    box-shadow: var(--photo-shadow);
-  }
-
-  .onward__media img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: left center;
-    transition: transform 900ms var(--ease-ink);
-  }
-
-  .onward__item:hover .onward__media img,
-  .onward__item:focus-visible .onward__media img {
-    transform: scale(1.03);
-  }
-
-  /* ---- The print pinned beside the introduction --------------------------- */
-  .print {
-    display: block;
-    justify-self: center;
-    width: min(100%, 16rem);
-    padding: 0.7rem 0.7rem 0;
-    background: var(--paper-raised);
-    box-shadow: var(--photo-shadow);
-    text-decoration: none;
-    transform: rotate(1.6deg);
-    transition: transform 700ms var(--ease-ink);
-  }
-
-  @media (min-width: 56rem) {
-    .print {
-      width: 20rem;
-    }
-  }
-
-  .print:hover,
-  .print:focus-visible {
-    transform: rotate(0deg) translateY(-2px);
-  }
-
-  .print img {
-    width: 100%;
-    aspect-ratio: 4 / 5;
-    height: auto;
-    object-fit: cover;
-  }
-
-  /* A headshot: square original, cropped in to the face and shoulders. */
-  .print__frame {
-    display: block;
-    overflow: hidden;
-  }
-
-  .print--portrait {
-    padding-block-end: 0.7rem;
-  }
-
-  .print--portrait img {
-    object-position: 50% 62%;
-    /* `scale`, not `transform`: the develop-in animation owns transform. */
-    scale: 1.22;
-    transform-origin: 50% 74%;
-  }
-
-  .print__caption {
-    display: block;
-    padding-block: var(--space-xs);
-    text-align: center;
-    font-style: italic;
-    color: var(--ink-muted);
+  html.is-lane .colophon {
+    display: none;
   }
 
   /* ---- Story lane -------------------------------------------------------- */
@@ -662,10 +673,6 @@
     font-size: var(--step-1);
   }
 
-  .lane__title.ink-heading .ink-heading__stroke {
-    height: 0.34em;
-    margin-block-start: 0.04em;
-  }
 
   @media (max-width: 40rem) {
     .lane__head {
@@ -899,116 +906,60 @@
     transform: none;
   }
 
-  /* ---- Writing stream ---------------------------------------------------- */
-  .stream {
-    list-style: none;
-    margin: 0;
-    padding: 0;
+  /* ---- Article ----------------------------------------------------------- */
+  .article__back {
+    margin-block-end: var(--space-m);
   }
 
-  .stream > li + li {
-    margin-block-start: var(--space-xl);
-    padding-block-start: var(--space-xl);
-    border-block-start: 1px solid var(--rule);
-  }
-
-  .entry__head {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: var(--space-2xs) var(--space-s);
-  }
-
-  .entry--article .entry__title {
-    font-size: var(--step-2);
-    margin-block: var(--space-2xs) var(--space-xs);
-  }
-
-  .entry--article .entry__title a {
+  .article__back a {
     text-decoration: none;
   }
 
-  .entry__summary {
-    color: var(--ink-muted);
-    max-width: var(--measure);
-  }
-
-  .entry__thought {
-    max-width: var(--measure);
-    font-size: var(--step-1);
-    line-height: 1.6;
-    margin-block-start: var(--space-xs);
-  }
-
-  .entry__thought > * + * {
-    margin-block-start: var(--space-s);
-  }
-
-  .entry__thought p:first-of-type {
-    display: block;
-  }
-
-  .kind {
-    color: var(--ink-faint);
-  }
-
-  .kind::before {
-    content: '';
-    display: inline-block;
-    width: 0.4em;
-    height: 0.4em;
-    margin-inline-end: 0.7em;
-    border-radius: 50%;
-    background: var(--ink-faint);
-    vertical-align: 0.12em;
-  }
-
-  .kind--article::before {
-    background: var(--accent);
-  }
-
-  .read-more {
-    display: inline-block;
-    margin-block-start: var(--space-s);
-  }
-
-  /* ---- Article ----------------------------------------------------------- */
-  .article__header {
-    max-width: var(--measure);
-  }
-
   .article__title {
-    font-size: var(--step-4);
-    margin-block: var(--space-s) var(--space-m);
+    font-size: var(--step-3);
+    line-height: 1.15;
   }
 
   .article__meta {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-2xs) var(--space-s);
-  }
-
-  .article__meta li {
+    gap: 0 0.5em;
+    margin: var(--space-2xs) 0 0;
+    padding: 0;
     list-style: none;
   }
 
   .article__meta li + li::before {
     content: '·';
-    margin-inline-end: var(--space-s);
-    color: var(--rule-strong);
+    margin-inline-end: 0.5em;
+  }
+
+  .prose {
+    margin-block-start: var(--space-l);
   }
 
   .prose > * + * {
-    margin-block-start: var(--space-m);
+    margin-block-start: 0.85em;
+  }
+
+  .prose > p {
+    text-align: justify;
+    hyphens: auto;
+    -webkit-hyphens: auto;
   }
 
   .prose > h2 {
-    margin-block-start: var(--space-xl);
+    margin-block: var(--space-xl) var(--space-s);
     font-size: var(--step-2);
+    font-variant-caps: small-caps;
+    letter-spacing: 0.05em;
+    padding-block-end: 0.15em;
+    border-block-end: 1px dotted var(--rule);
   }
 
   .prose > h3 {
     margin-block-start: var(--space-l);
+    font-style: italic;
   }
 
   .prose > h2 + *,
@@ -1016,24 +967,27 @@
     margin-block-start: var(--space-s);
   }
 
-  /* Drop cap on the first real paragraph, not a leading image. */
+  /* Red drop cap on the first real paragraph. */
   .prose--dropcap > p:first-of-type:not(:has(img))::first-letter,
   .prose--dropcap > h2:first-of-type + p::first-letter {
     float: left;
-    font-size: 3.6em;
-    line-height: 0.74;
-    padding-inline-end: 0.09em;
-    padding-block-start: 0.04em;
-    margin-block-end: -0.06em;
-    color: var(--accent-ink);
+    font-size: 4.2em;
+    line-height: 0.8;
+    padding-inline-end: 0.06em;
+    margin-block: 0.06em -0.05em;
+    color: var(--accent);
     font-weight: 400;
+  }
+
+  /* The first section head reads as an opening, not a break. */
+  .prose--dropcap > h2:first-of-type {
+    margin-block-start: var(--space-l);
   }
 
   .prose blockquote {
     margin-inline: 0;
     padding-inline-start: var(--space-m);
-    border-inline-start: 2px solid var(--accent-soft);
-    color: var(--ink-muted);
+    border-inline-start: 1px solid var(--rule);
     font-style: italic;
   }
 
@@ -1044,33 +998,33 @@
   .prose blockquote cite,
   .prose figcaption {
     display: block;
-    font-style: normal;
-    margin-block-start: var(--space-xs);
-    font-family: var(--font-mono);
+    font-style: italic;
+    margin-block-start: var(--space-2xs);
     font-size: var(--step--1);
-    letter-spacing: 0.06em;
     color: var(--ink-faint);
   }
 
+  /* Pull quotes live in the right margin on a computer, like a sidenote. */
   .prose .pullquote {
-    font-size: var(--step-2);
+    font-size: var(--step-1);
     line-height: 1.3;
-    letter-spacing: -0.012em;
+    font-style: italic;
     color: var(--ink);
-    max-width: 26ch;
-    margin-block: var(--space-xl);
+    margin-block: var(--space-l);
     padding-inline-start: var(--space-m);
     border-inline-start: 1px solid var(--accent);
     text-wrap: balance;
   }
 
-  @media (min-width: 62rem) {
+  @media (min-width: 60rem) {
     .prose .pullquote {
-      float: inline-end;
-      width: 18rem;
-      margin-inline-start: var(--space-l);
-      margin-inline-end: -8rem;
-      margin-block: var(--space-s) var(--space-m);
+      float: right;
+      clear: right;
+      width: 15rem;
+      margin: 0.3em -18.5rem 0 0;
+      padding: 0;
+      border: 0;
+      font-size: var(--step-0);
     }
   }
 
@@ -1086,7 +1040,6 @@
   .prose img {
     width: 100%;
     height: auto;
-    box-shadow: var(--photo-shadow);
   }
 
   .prose figure {
@@ -1102,30 +1055,26 @@
     background: var(--paper);
   }
 
+  /* An italic line right after an image is its caption. */
   .prose img + em,
   .prose p:has(img) + p:has(> em:only-child) {
     display: block;
-    font-family: var(--font-mono);
     font-size: var(--step--1);
-    font-style: normal;
-    letter-spacing: 0.06em;
     color: var(--ink-faint);
-    margin-block: calc(var(--space-xs) * -1) var(--space-m);
+    text-align: left;
+    margin-block: calc(var(--space-2xs) * -1) var(--space-m);
   }
 
   .prose code {
-    font-family: var(--font-mono);
     font-size: 0.86em;
     background: var(--paper-sunk);
-    padding: 0.15em 0.35em;
-    border-radius: 2px;
+    padding: 0.1em 0.3em;
   }
 
   .prose pre {
     padding: var(--space-m);
     overflow-x: auto;
     background: var(--paper-sunk) !important;
-    border: 1px solid var(--rule);
     font-size: var(--step--1);
     line-height: 1.6;
   }
@@ -1140,45 +1089,28 @@
   }
 
   .article__footer {
-    max-width: var(--measure);
-    margin-block-start: var(--space-2xl);
-    padding-block-start: var(--space-m);
-    border-block-start: 1px solid var(--rule);
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     gap: var(--space-s);
+    margin-block-start: var(--space-2xl);
+    padding-block-start: var(--space-s);
+    border-block-start: 1px dotted var(--rule);
   }
 
   /* ---- Contact ----------------------------------------------------------- */
-  .contact__note {
-    font-size: var(--step-2);
-    line-height: 1.38;
-    max-width: 26ch;
-    text-wrap: balance;
-    margin-block-start: var(--space-m);
-  }
-
-  .contact__email {
-    display: inline-block;
-    font-size: var(--step-2);
-    margin-block-start: var(--space-xl);
-    word-break: break-word;
-  }
-
   .link-list {
-    list-style: none;
-    margin: var(--space-xl) 0 0;
+    margin: var(--space-l) 0 0;
     padding: 0;
-    max-width: 30rem;
+    list-style: none;
   }
 
   .link-list li {
-    border-block-start: 1px solid var(--rule);
+    border-block-end: 1px dotted var(--rule);
   }
 
-  .link-list li:last-child {
-    border-block-end: 1px solid var(--rule);
+  .link-list li:first-child {
+    border-block-start: 1px dotted var(--rule);
   }
 
   .link-list a {
@@ -1186,30 +1118,13 @@
     justify-content: space-between;
     align-items: baseline;
     gap: var(--space-s);
-    padding-block: var(--space-s);
+    padding-block: 0.55em;
     text-decoration: none;
-    transition: color 380ms var(--ease-ink);
   }
 
-  .link-list a:hover,
-  .link-list a:focus-visible {
-    color: var(--accent-ink);
-  }
-
-  /* ---- Ink wash divider -------------------------------------------------- */
-  .wash {
-    display: block;
-    width: 100%;
-    height: 2.5rem;
-    margin-block: var(--space-xl);
-    color: var(--ink-faint);
-    overflow: visible;
-  }
-
-  /* ---- 404 --------------------------------------------------------------- */
-  .notfound {
-    padding-block: var(--space-3xl);
-    text-align: left;
+  .link-list a > span:first-child {
+    font-variant-caps: small-caps;
+    letter-spacing: 0.06em;
   }
 }
 
@@ -1217,19 +1132,11 @@
    Utilities
    -------------------------------------------------------------------------- */
 @layer utilities {
-  .flow-l > * + * {
-    margin-block-start: var(--space-l);
-  }
-
-  .flow-xl > * + * {
-    margin-block-start: var(--space-xl);
-  }
-
   .page-top {
-    padding-block-start: var(--space-xl);
+    padding-block-start: 0;
   }
 
   .page-bottom {
-    padding-block-end: var(--space-2xl);
+    padding-block-end: var(--space-xl);
   }
 }

@@ -1,26 +1,18 @@
 ---
 import Base from '../layouts/Base.astro';
-import InkHeading from '../components/InkHeading.astro';
 import { url } from '../lib/url';
 ---
 
 <Base title="Not found" description="That page is not here.">
-  <div class="shell shell--narrow notfound">
-    <InkHeading as="h1">Not here</InkHeading>
-    <p class="notfound__text">
-      This page doesn't exist.
-    </p>
-    <p>
-      <a class="ink-link" href={url('/')}>Go home</a>
-    </p>
+  <div class="folio page-bottom">
+    <h1 class="title">Not here</h1>
+    <p class="subtitle">This page doesn't exist.</p>
+    <p class="notfound__home"><a href={url('/')}>Go home</a></p>
   </div>
 </Base>
 
 <style>
-  .notfound__text {
-    margin-block: var(--space-l) var(--space-m);
-    color: var(--ink-muted);
-    max-width: 36ch;
-    font-size: var(--step-1);
+  .notfound__home {
+    margin-block-start: var(--space-l);
   }
 </style>
